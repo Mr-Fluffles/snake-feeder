@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Snake Feeder</title>
+    <title>Danger Noodle Tracker</title>
     <style>
         :root {
             --bg: #121212;
             --card: #1e1e1e;
             --text: #e0e0e0;
-            --accent: #00e676; /* Snake Green */
+            --accent: #00e676;
             --danger: #ff5252;
         }
         body {
@@ -23,6 +23,7 @@
             height: 100vh;
             margin: 0;
             text-align: center;
+            transition: background-color 0.5s ease;
         }
         .container {
             background: var(--card);
@@ -31,14 +32,23 @@
             width: 85%;
             max-width: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
         }
-        h1 { margin-top: 0; font-size: 1.5rem; }
+        h1 { margin-top: 0; font-size: 1.8rem; }
+        .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+        
+        .input-group {
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+        
         .status {
             font-size: 1.2rem;
             margin: 20px 0;
             padding: 15px;
             background: #333;
             border-radius: 10px;
+            font-weight: bold;
         }
         button {
             background: var(--accent);
@@ -60,7 +70,7 @@
             color: var(--accent);
             margin-top: 20px;
         }
-        input {
+        input[type="number"] {
             background: #333;
             border: none;
             color: white;
@@ -69,38 +79,86 @@
             width: 60px;
             text-align: center;
             font-size: 1rem;
+            font-weight: bold;
         }
-        .small-text { font-size: 0.8rem; color: #888; margin-top: 20px;}
+        
+        /* Color Picker Styling */
+        .color-picker-wrapper {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background: none;
+            border-radius: 50%;
+        }
+        
+        .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🐍 Snake Tracker</h1>
+    <span class="emoji">🐍</span>
+    <h1>Danger Noodle Tracker</h1>
     
-    <div>
-        Feed every <input type="number" id="interval" value="7"> days
+    <div class="input-group">
+        Feed every <input type="number" id="interval" value="21"> days
     </div>
 
     <div class="status" id="statusDisplay">
         Loading...
     </div>
 
-    <button onclick="feedSnake()">I Fed The Snake!</button>
+    <button onclick="feedSnake()">I Fed The Snek!</button>
     
-    <button class="secondary" onclick="addToCalendar()">📅 Set Reminder</button>
+    <button class="secondary" onclick="addToCalendar()">📅 Recurring Reminder</button>
 
     <p class="small-text" id="lastFedText"></p>
+
+    <div class="color-picker-wrapper">
+        <label for="bgPicker">Theme:</label>
+        <input type="color" id="bgPicker" value="#121212">
+    </div>
 </div>
 
 <script>
-    // Load data on startup
+    // --- 1. Load Saved Data on Startup ---
     const savedDate = localStorage.getItem('lastFed');
     const savedInterval = localStorage.getItem('interval');
-    
-    if (savedInterval) document.getElementById('interval').value = savedInterval;
+    const savedColor = localStorage.getItem('themeColor');
+
+    // Apply saved interval or default to 21 (3 weeks)
+    if (savedInterval) {
+        document.getElementById('interval').value = savedInterval;
+    }
+
+    // Apply saved color
+    if (savedColor) {
+        document.documentElement.style.setProperty('--bg', savedColor);
+        document.getElementById('bgPicker').value = savedColor;
+    }
+
     updateDisplay();
 
+    // --- 2. Color Picker Logic ---
+    document.getElementById('bgPicker').addEventListener('input', function(e) {
+        const newColor = e.target.value;
+        // Change CSS variable
+        document.documentElement.style.setProperty('--bg', newColor);
+        // Save to phone memory
+        localStorage.setItem('themeColor', newColor);
+    });
+
+    // --- 3. Feeding Logic ---
     function feedSnake() {
         const now = new Date();
         localStorage.setItem('lastFed', now.toISOString());
@@ -110,12 +168,12 @@
 
     function updateDisplay() {
         const lastFed = localStorage.getItem('lastFed');
-        const interval = parseInt(document.getElementById('interval').value) || 7;
+        const interval = parseInt(document.getElementById('interval').value) || 21;
         const statusDiv = document.getElementById('statusDisplay');
         const lastFedText = document.getElementById('lastFedText');
 
         if (!lastFed) {
-            statusDiv.innerHTML = "⚠️ No data. Feed the snake!";
+            statusDiv.innerHTML = "⚠️ No data. Feed the noodle!";
             statusDiv.style.color = "var(--danger)";
             return;
         }
@@ -125,6 +183,10 @@
         nextDate.setDate(lastDate.getDate() + interval);
         
         const today = new Date();
+        // Reset time to midnight for accurate day calculation
+        today.setHours(0,0,0,0);
+        nextDate.setHours(0,0,0,0);
+
         const diffTime = nextDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -139,27 +201,30 @@
         }
     }
 
+    // --- 4. Calendar Logic (Recurring) ---
     function addToCalendar() {
-        const interval = parseInt(document.getElementById('interval').value) || 7;
-        const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
+        const interval = parseInt(document.getElementById('interval').value) || 21;
         
-        // Calculate next feed date
+        // We start the reminder on the *Next* feed date
+        const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
         const nextFeed = new Date(lastFed);
         nextFeed.setDate(nextFeed.getDate() + interval);
         
-        // Format for ICS file (YearMonthDay)
+        // Format Date for ICS (YearMonthDay)
         const year = nextFeed.getFullYear();
         const month = (nextFeed.getMonth() + 1).toString().padStart(2, '0');
         const day = nextFeed.getDate().toString().padStart(2, '0');
         const dateString = `${year}${month}${day}`;
 
-        // Create standard ICS file content
+        // Generate ICS content with RRULE (Recurrence Rule)
+        // RRULE:FREQ=DAILY;INTERVAL=[days] -> This makes it repeat every X days
         const icsMsg = `BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
 DTSTART;VALUE=DATE:${dateString}
-SUMMARY:🐍 Feed the Snake
-DESCRIPTION:Time to feed the danger noodle.
+RRULE:FREQ=DAILY;INTERVAL=${interval}
+SUMMARY:🐍 Feed the Danger Noodle
+DESCRIPTION:Time to feed the snek. This repeats every ${interval} days.
 BEGIN:VALARM
 TRIGGER:-PT9H
 ACTION:DISPLAY
@@ -168,12 +233,11 @@ END:VALARM
 END:VEVENT
 END:VCALENDAR`;
 
-        // Create a fake download link
         const blob = new Blob([icsMsg], { type: 'text/calendar' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'feed-snake.ics';
+        a.download = 'snek-schedule.ics';
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
