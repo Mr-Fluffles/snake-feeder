@@ -155,11 +155,14 @@
             border-radius: 5px;
             opacity: 0;
             animation: reveal 2s forwards, glitch-shake 4s infinite;
-            animation-delay: 3s; /* Wait 3 seconds before appearing */
+            animation-delay: 3s; 
             cursor: help;
             box-shadow: 0 0 5px #ff0000;
             text-transform: uppercase;
             letter-spacing: 1px;
+            /* Make sure it sits on top so clicks register instantly */
+            position: relative; 
+            z-index: 100;
         }
         
         @keyframes reveal {
@@ -289,7 +292,6 @@
         const nextDate = new Date(lastDate);
         nextDate.setDate(lastDate.getDate() + interval);
         
-        // Zero out time for day calc
         const today = new Date();
         today.setHours(0,0,0,0);
         const tempNext = new Date(nextDate);
@@ -312,17 +314,14 @@
         const interval = parseInt(document.getElementById('interval').value) || 21;
         const timeVal = document.getElementById('feedTime').value || "09:00";
         
-        // Calculate next date
         const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
         const nextFeed = new Date(lastFed);
         nextFeed.setDate(nextFeed.getDate() + interval);
         
-        // Format Date: YYYYMMDD
         const year = nextFeed.getFullYear();
         const month = (nextFeed.getMonth() + 1).toString().padStart(2, '0');
         const day = nextFeed.getDate().toString().padStart(2, '0');
         
-        // Format Time: HHMM00
         const timeParts = timeVal.split(':');
         const hours = timeParts[0];
         const minutes = timeParts[1];
@@ -354,27 +353,28 @@ END:VCALENDAR`;
         document.body.removeChild(a);
     }
 
-    // --- CHAOS MODE ---
+    // --- CHAOS MODE (INSTANT TRIGGER) ---
     let chaosAudio = null; 
 
     function activateChaos() {
-        if(!confirm("⚠️ SYSTEM ERROR: ADMIN ACCESS DENIED. PROCEED?")) {
-            return; 
-        }
+        // NO CONFIRMATION. JUST CHAOS.
         
         document.body.classList.add('chaos'); 
         document.getElementById('mainCard').classList.add('chaos-spin');
         document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA";
+        
+        // Hide the button immediately so she can't spam it (or turn it off)
         document.querySelector('.forbidden-btn').style.display = 'none';
         
+        // Play Audio
         chaosAudio = new Audio('heman.mp3');
         chaosAudio.loop = true; 
         chaosAudio.volume = 1.0; 
-        
         chaosAudio.play().catch(e => console.log("Audio blocked: " + e));
         
+        // Delay the "You messed up" message just enough so she sees the rainbows first
         setTimeout(() => {
-            alert("🦄 SYSTEM BREACHED BY RAINBOWS 🦄");
+            alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄\n(Refresh the page to fix it... if you can)");
         }, 500);
     }
 </script>
