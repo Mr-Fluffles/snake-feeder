@@ -32,7 +32,7 @@
             border-radius: 20px;
             width: 85%;
             max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Softer shadow */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
             z-index: 10;
             transition: transform 1s;
@@ -40,7 +40,15 @@
         h1 { margin-top: 0; font-size: 1.8rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
         
-        .input-group { margin: 15px 0; font-size: 1.1rem; }
+        .input-group { 
+            margin: 15px 0; 
+            font-size: 1.1rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
         
         .status {
             font-size: 1.2rem;
@@ -70,6 +78,8 @@
             color: var(--accent);
             margin-top: 20px;
         }
+        
+        /* INPUT STYLING */
         input[type="number"] {
             background: #333;
             border: none;
@@ -80,6 +90,16 @@
             text-align: center;
             font-size: 1rem;
             font-weight: bold;
+        }
+        input[type="time"] {
+            background: #333;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
         }
         
         /* --- PASTEL PICKER UI --- */
@@ -106,7 +126,6 @@
         }
         .swatch:hover { transform: scale(1.1); }
         
-        /* Hide the ugly default picker but keep it functional */
         .manual-picker-wrapper {
             display: flex;
             align-items: center;
@@ -124,24 +143,38 @@
             border-radius: 50%;
         }
         
-        /* --- THE STEALTH TRAP --- */
+        /* --- THE GLITCH TRAP --- */
         .forbidden-btn {
-            background-color: #2a0000;
-            color: #5e0000;
+            background-color: #220000;
+            color: #ff3333;
+            font-family: "Courier New", monospace;
             font-size: 0.7rem;
-            padding: 8px;
+            padding: 10px;
             margin-top: 50px;
-            border: 1px solid #3d0000;
+            border: 1px solid #ff0000;
             border-radius: 5px;
             opacity: 0;
-            animation: creepIn 3s forwards;
-            animation-delay: 5s;
+            animation: reveal 2s forwards, glitch-shake 4s infinite;
+            animation-delay: 3s; /* Wait 3 seconds before appearing */
             cursor: help;
+            box-shadow: 0 0 5px #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
-        @keyframes creepIn {
+        @keyframes reveal {
             from { opacity: 0; }
-            to { opacity: 0.3; }
+            to { opacity: 0.8; }
+        }
+
+        @keyframes glitch-shake {
+            0% { transform: translate(0, 0); }
+            90% { transform: translate(0, 0); }
+            92% { transform: translate(-2px, 2px); }
+            94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); }
+            98% { transform: translate(2px, 2px); }
+            100% { transform: translate(0, 0); }
         }
 
         /* CHAOS MODE STYLES */
@@ -174,7 +207,11 @@
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
     <div class="input-group">
-        Feed every <input type="number" id="interval" value="21"> days
+        Every <input type="number" id="interval" value="21"> days
+    </div>
+    
+    <div class="input-group">
+        At <input type="time" id="feedTime" value="09:00">
     </div>
 
     <div class="status" id="statusDisplay">
@@ -183,7 +220,7 @@
 
     <button onclick="feedSnake()">I Fed The Snek!</button>
     
-    <button class="secondary" onclick="addToCalendar()">📅 Recurring Reminder</button>
+    <button class="secondary" onclick="addToCalendar()">📅 Set Recurring Alarm</button>
 
     <p class="small-text" id="lastFedText"></p>
 
@@ -200,7 +237,7 @@
         or custom: <input type="color" id="bgPicker" value="#C8E6C9">
     </div>
 
-    <button class="forbidden-btn" onclick="activateChaos()">🚫 DO NOT PRESS</button>
+    <button class="forbidden-btn" onclick="activateChaos()">⚠️ Admin Debug Mode<br>(Do Not Touch)</button>
 </div>
 
 <script>
@@ -208,33 +245,31 @@
     const savedDate = localStorage.getItem('lastFed');
     const savedInterval = localStorage.getItem('interval');
     const savedColor = localStorage.getItem('themeColor');
+    const savedTime = localStorage.getItem('feedTime');
 
     if (savedInterval) document.getElementById('interval').value = savedInterval;
+    if (savedTime) document.getElementById('feedTime').value = savedTime;
     
-    // Load saved color or default to Mint
     const initialColor = savedColor || '#C8E6C9';
-    setTheme(initialColor, false); // false = don't save yet (avoid loop)
+    setTheme(initialColor, false);
 
     updateDisplay();
 
-    // Manual Picker Listener
     document.getElementById('bgPicker').addEventListener('input', function(e) {
         setTheme(e.target.value);
     });
 
-    // Theme Setter Function
     function setTheme(color, save = true) {
         document.documentElement.style.setProperty('--bg', color);
         document.getElementById('bgPicker').value = color;
-        if (save) {
-            localStorage.setItem('themeColor', color);
-        }
+        if (save) localStorage.setItem('themeColor', color);
     }
 
     function feedSnake() {
         const now = new Date();
         localStorage.setItem('lastFed', now.toISOString());
         localStorage.setItem('interval', document.getElementById('interval').value);
+        localStorage.setItem('feedTime', document.getElementById('feedTime').value);
         updateDisplay();
     }
 
@@ -253,11 +288,16 @@
         const lastDate = new Date(lastFed);
         const nextDate = new Date(lastDate);
         nextDate.setDate(lastDate.getDate() + interval);
+        
+        // Zero out time for day calc
         const today = new Date();
         today.setHours(0,0,0,0);
-        nextDate.setHours(0,0,0,0);
-        const diffTime = nextDate - today;
+        const tempNext = new Date(nextDate);
+        tempNext.setHours(0,0,0,0);
+        
+        const diffTime = tempNext - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
         lastFedText.innerText = "Last fed: " + lastDate.toLocaleDateString();
         if (diffDays <= 0) {
             statusDiv.innerHTML = "🍽️ FEED ME NOW!";
@@ -270,25 +310,35 @@
 
     function addToCalendar() {
         const interval = parseInt(document.getElementById('interval').value) || 21;
+        const timeVal = document.getElementById('feedTime').value || "09:00";
+        
+        // Calculate next date
         const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
         const nextFeed = new Date(lastFed);
         nextFeed.setDate(nextFeed.getDate() + interval);
+        
+        // Format Date: YYYYMMDD
         const year = nextFeed.getFullYear();
         const month = (nextFeed.getMonth() + 1).toString().padStart(2, '0');
         const day = nextFeed.getDate().toString().padStart(2, '0');
-        const dateString = `${year}${month}${day}`;
+        
+        // Format Time: HHMM00
+        const timeParts = timeVal.split(':');
+        const hours = timeParts[0];
+        const minutes = timeParts[1];
+        const fullDateTime = `${year}${month}${day}T${hours}${minutes}00`;
 
         const icsMsg = `BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:${dateString}
+DTSTART:${fullDateTime}
 RRULE:FREQ=DAILY;INTERVAL=${interval}
 SUMMARY:🐍 Feed the Danger Noodle
-DESCRIPTION:Repeats every ${interval} days.
+DESCRIPTION:Repeats every ${interval} days at ${timeVal}.
 BEGIN:VALARM
-TRIGGER:-PT9H
+TRIGGER:-PT0M
 ACTION:DISPLAY
-DESCRIPTION:Reminder
+DESCRIPTION:Feeding Time!
 END:VALARM
 END:VEVENT
 END:VCALENDAR`;
@@ -304,11 +354,11 @@ END:VCALENDAR`;
         document.body.removeChild(a);
     }
 
-    // --- CHAOS MODE LOGIC ---
+    // --- CHAOS MODE ---
     let chaosAudio = null; 
 
     function activateChaos() {
-        if(!confirm("WARNING: Do not press this. Seriously.")) {
+        if(!confirm("⚠️ SYSTEM ERROR: ADMIN ACCESS DENIED. PROCEED?")) {
             return; 
         }
         
@@ -317,15 +367,14 @@ END:VCALENDAR`;
         document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA";
         document.querySelector('.forbidden-btn').style.display = 'none';
         
-        // Tries to play 'heman.mp3' - Ensure this file is in your GitHub repo!
         chaosAudio = new Audio('heman.mp3');
         chaosAudio.loop = true; 
         chaosAudio.volume = 1.0; 
         
-        chaosAudio.play().catch(e => console.log("Audio failed (iOS requires interaction or silent switch off): " + e));
+        chaosAudio.play().catch(e => console.log("Audio blocked: " + e));
         
         setTimeout(() => {
-            alert("🦄 TURN UP YOUR VOLUME! 🦄\n(Refresh the app to survive)");
+            alert("🦄 SYSTEM BREACHED BY RAINBOWS 🦄");
         }, 500);
     }
 </script>
