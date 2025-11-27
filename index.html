@@ -6,7 +6,7 @@
     <title>Danger Noodle Tracker</title>
     <style>
         :root {
-            --bg: #C8E6C9; /* Default Pastel Mint */
+            --bg: #C8E6C9;
             --card: #1e1e1e;
             --text: #e0e0e0;
             --accent: #00e676;
@@ -23,10 +23,23 @@
             min-height: 100vh;
             margin: 0;
             text-align: center;
-            transition: background-color 0.5s ease;
+            transition: background 0.5s ease;
             overflow: hidden; 
-            touch-action: manipulation; /* Improves tapping response */
+            touch-action: none;
         }
+        
+        /* HOLOGRAPHIC THEME ANIMATION */
+        body.holo-theme {
+            background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
+            background-size: 800% 800%;
+            animation: holoGradient 10s ease infinite;
+        }
+        @keyframes holoGradient {
+            0%{background-position:0% 50%}
+            50%{background-position:100% 50%}
+            100%{background-position:0% 50%}
+        }
+
         .container {
             background: var(--card);
             padding: 2rem;
@@ -100,7 +113,7 @@
         }
         
         .theme-label { margin-top: 30px; font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
-        .pastel-swatches { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .pastel-swatches { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .swatch { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
         .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
         input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
@@ -146,49 +159,79 @@
         @keyframes rainbow-flash { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* GAME STYLES */
-        .game-ui {
-            display: none; /* Hidden by default */
+        /* GAME CANVAS STYLES */
+        canvas {
+            display: none;
             position: absolute;
-            top: 20px;
+            top: 0;
+            left: 0;
+            z-index: 50;
+            background: rgba(0,0,0,0.85);
+        }
+        .game-overlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 60;
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .coupon {
+            border: 3px dashed #333;
+            background: #fffbe6;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: "Courier New", monospace;
+            color: #333;
+            transform: rotate(-2deg);
+        }
+        
+        .control-hint {
+            position: fixed;
+            bottom: 20px;
             width: 100%;
             text-align: center;
-            z-index: 50;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            z-index: 55;
+            display: none;
+            pointer-events: none;
         }
-        .score-board {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-            background: rgba(255,255,255,0.5);
-            padding: 10px 20px;
-            border-radius: 20px;
-        }
-        .turkey-target {
-            position: absolute;
-            font-size: 4rem;
-            cursor: pointer;
-            user-select: none;
-            animation: popUp 0.3s ease-out;
-        }
-        @keyframes popUp {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
-        }
+
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
 
-<div class="game-ui" id="gameUI">
-    <div class="score-board">Score: <span id="scoreVal">0</span> 🦃</div>
-    <p style="color: #666; font-size: 0.9rem;">(Refresh app to stop)</p>
+<canvas id="gameCanvas"></canvas>
+<div class="control-hint" id="gameHint">Tap LEFT or RIGHT to move</div>
+
+<div class="game-overlay" id="msgOverlay">
+    <h2 id="msgTitle">Game Over</h2>
+    <p id="msgBody">You ate the fruitcake.</p>
+    <div id="couponBox" class="coupon" style="display:none;">
+        <h3>🎟️ OFFICIAL COUPON 🎟️</h3>
+        <p><b>Luthy</b> owes me one free trip to the pet store to buy frozen mice.</p>
+        <small>Valid forever.</small>
+    </div>
+    <button onclick="resetGame()" id="retryBtn" style="margin-top:15px;">Try Again</button>
+    <button onclick="closeGame()" id="closeBtn" class="secondary" style="margin-top:10px; display:none;">Main Menu</button>
 </div>
 
 <div class="container" id="mainCard">
     <span class="emoji">🐍</span>
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
-    <button class="game-btn" onclick="startGame()">🦃 Play Turkey Hunt</button>
+    <button class="game-btn" onclick="initGame()">🦃 Catch The Dinner</button>
 
     <div class="input-group">
         Every <input type="number" id="interval" value="21"> days
@@ -205,7 +248,7 @@
     <p class="small-text" id="lastFedText"></p>
 
     <span class="theme-label">Choose a Vibe:</span>
-    <div class="pastel-swatches">
+    <div class="pastel-swatches" id="swatchContainer">
         <div class="swatch" style="background: #C8E6C9;" onclick="setTheme('#C8E6C9')"></div>
         <div class="swatch" style="background: #E1BEE7;" onclick="setTheme('#E1BEE7')"></div>
         <div class="swatch" style="background: #B3E5FC;" onclick="setTheme('#B3E5FC')"></div>
@@ -220,27 +263,71 @@
 </div>
 
 <script>
-    // --- APP LOGIC ---
-    const savedDate = localStorage.getItem('lastFed');
+    // --- APP STATE ---
     const savedInterval = localStorage.getItem('interval');
     const savedColor = localStorage.getItem('themeColor');
     const savedTime = localStorage.getItem('feedTime');
+    const goldUnlocked = localStorage.getItem('goldUnlocked');
+    const holoUnlocked = localStorage.getItem('holoUnlocked');
 
+    // --- INIT ---
     if (savedInterval) document.getElementById('interval').value = savedInterval;
     if (savedTime) document.getElementById('feedTime').value = savedTime;
     
     const initialColor = savedColor || '#C8E6C9';
-    setTheme(initialColor, false);
+    // If it was a hex code, set it. If it was 'holo', enable holo.
+    if(initialColor === 'holo') {
+        document.body.classList.add('holo-theme');
+    } else {
+        setTheme(initialColor, false);
+    }
+    
     updateDisplay();
+    
+    if(goldUnlocked === 'true') addGoldSwatch();
+    if(holoUnlocked === 'true') addHoloSwatch();
 
+    // --- THEME LOGIC ---
     document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
 
     function setTheme(color, save = true) {
+        document.body.classList.remove('holo-theme'); // Turn off holo if picking color
         document.documentElement.style.setProperty('--bg', color);
         document.getElementById('bgPicker').value = color;
         if (save) localStorage.setItem('themeColor', color);
     }
 
+    function setHolo(save = true) {
+        document.body.classList.add('holo-theme');
+        if(save) localStorage.setItem('themeColor', 'holo');
+    }
+
+    function addGoldSwatch() {
+        if(document.getElementById('goldSwatch')) return;
+        const swatchContainer = document.getElementById('swatchContainer');
+        const goldBtn = document.createElement('div');
+        goldBtn.id = 'goldSwatch';
+        goldBtn.className = 'swatch';
+        goldBtn.style.background = 'linear-gradient(135deg, #FFD700, #FDB931)';
+        goldBtn.style.border = '2px solid #fff';
+        goldBtn.onclick = function() { setTheme('#FFD700'); };
+        swatchContainer.appendChild(goldBtn);
+    }
+
+    function addHoloSwatch() {
+        if(document.getElementById('holoSwatch')) return;
+        const swatchContainer = document.getElementById('swatchContainer');
+        const holoBtn = document.createElement('div');
+        holoBtn.id = 'holoSwatch';
+        holoBtn.className = 'swatch';
+        holoBtn.style.background = 'linear-gradient(135deg, #fbc2eb, #a6c1ee)';
+        holoBtn.style.border = '2px solid #fff';
+        holoBtn.title = "Holographic";
+        holoBtn.onclick = function() { setHolo(); };
+        swatchContainer.appendChild(holoBtn);
+    }
+
+    // --- STANDARD APP FUNCTIONS ---
     function feedSnake() {
         const now = new Date();
         localStorage.setItem('lastFed', now.toISOString());
@@ -319,47 +406,217 @@ END:VCALENDAR`;
     }
 
     // --- GAME LOGIC ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    let gameLoop;
     let score = 0;
-    let gameInterval;
+    let isGameOver = false;
+    let isPaused = false;
+    let level = 1;
 
-    function startGame() {
-        // Hide Main App
+    let player = { x: 0, y: 0, width: 60, height: 60, icon: '🐍' };
+    let items = [];
+    let frameCount = 0;
+
+    function initGame() {
         document.getElementById('mainCard').style.display = 'none';
-        // Show Game UI
-        document.getElementById('gameUI').style.display = 'block';
+        canvas.style.display = 'block';
+        document.getElementById('gameHint').style.display = 'block';
         
-        // Start spawning turkeys
-        spawnTurkey();
-        gameInterval = setInterval(spawnTurkey, 800); // New turkey every 0.8 seconds
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        player.x = canvas.width / 2 - player.width / 2;
+        player.y = canvas.height - 100;
+        
+        score = 0;
+        level = 1;
+        items = [];
+        isGameOver = false;
+        isPaused = false;
+        
+        window.addEventListener('touchstart', handleTouch);
+        window.addEventListener('mousedown', handleMouse);
+        gameLoop = requestAnimationFrame(updateGame);
     }
 
-    function spawnTurkey() {
-        const turkey = document.createElement('div');
-        turkey.innerText = "🦃";
-        turkey.classList.add('turkey-target');
-        
-        // Random Position (avoiding edges)
-        const x = Math.random() * (window.innerWidth - 60);
-        const y = Math.random() * (window.innerHeight - 100) + 50;
-        
-        turkey.style.left = x + 'px';
-        turkey.style.top = y + 'px';
-        
-        // Click Handler
-        turkey.onclick = function() {
-            score++;
-            document.getElementById('scoreVal').innerText = score;
-            turkey.innerText = "💥"; // Explosion effect
-            setTimeout(() => turkey.remove(), 200);
-        };
-        
-        document.body.appendChild(turkey);
-        
-        // Remove turkey if not clicked after 2 seconds (keep screen clean)
-        setTimeout(() => {
-            if(turkey.parentNode) turkey.remove();
-        }, 2000);
+    function handleTouch(e) { movePlayer(e.touches[0].clientX); }
+    function handleMouse(e) { movePlayer(e.clientX); }
+    
+    function movePlayer(inputX) {
+        if(inputX < canvas.width / 2) player.x -= 40;
+        else player.x += 40;
+        if(player.x < 0) player.x = 0;
+        if(player.x > canvas.width - player.width) player.x = canvas.width - player.width;
     }
+
+    function updateGame() {
+        if (isGameOver || isPaused) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // UI
+        ctx.fillStyle = "white";
+        ctx.font = "30px Arial";
+        ctx.fillText("Score: " + score, 20, 50);
+        
+        // Level Indicator
+        let color = "#00e676"; // Lvl 1
+        if(level === 2) color = "#FFD700"; // Lvl 2
+        if(level === 3) color = "#ff9a9e"; // Lvl 3
+        ctx.fillStyle = color;
+        ctx.font = "20px Arial";
+        ctx.fillText("Level " + level, 20, 80);
+
+        // Player
+        ctx.font = "50px Arial";
+        ctx.fillText(player.icon, player.x, player.y + 50);
+
+        frameCount++;
+        
+        // SPAWN RATES & DIFFICULTY
+        let currentSpawnRate = 50;
+        let speedMult = 1;
+        let badThreshold = 0.2; // 20% bad items
+        
+        if (level === 2) { 
+            currentSpawnRate = 40; 
+            speedMult = 1.5; 
+            badThreshold = 0.35; 
+        }
+        if (level === 3) { 
+            currentSpawnRate = 25; // Chaos
+            speedMult = 2.0; 
+            badThreshold = 0.5; // 50% bad items!
+        }
+
+        if(frameCount % currentSpawnRate === 0) {
+            let type = 'good';
+            let icon = '🦃';
+            
+            if (Math.random() < badThreshold) {
+                type = 'bad';
+                icon = '🍞'; 
+            } else {
+                const foods = ['🦃', '🥧', '🐀'];
+                icon = foods[Math.floor(Math.random() * foods.length)];
+            }
+            
+            let speed = (Math.random() * 3 + 3) * speedMult;
+
+            items.push({
+                x: Math.random() * (canvas.width - 50),
+                y: -50,
+                speed: speed,
+                icon: icon,
+                type: type
+            });
+        }
+
+        // Update Items
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            item.y += item.speed;
+            ctx.fillText(item.icon, item.x, item.y + 50);
+            
+            // Collision
+            if (item.x < player.x + player.width && item.x + 50 > player.x &&
+                item.y < player.y + player.height && item.y + 50 > player.y) {
+                if(item.type === 'bad') {
+                    endGame("You ate the fruitcake! 🤢");
+                } else {
+                    score++;
+                    items.splice(i, 1);
+                    i--;
+                    checkLevelUp();
+                }
+            }
+            if (item.y > canvas.height) { items.splice(i, 1); i--; }
+        }
+        gameLoop = requestAnimationFrame(updateGame);
+    }
+
+    function checkLevelUp() {
+        // LEVEL 2 UNLOCK (25 pts)
+        if (score === 25 && level === 1) {
+            isPaused = true;
+            level = 2;
+            localStorage.setItem('goldUnlocked', 'true');
+            addGoldSwatch();
+            setTheme('#FFD700'); 
+            showModal("✨ GOLD UNLOCKED! ✨", "New Theme Acquired!<br>Next Reward at 50!", false, true);
+        }
+        
+        // LEVEL 3 UNLOCK (50 pts)
+        if (score === 50 && level === 2) {
+            isPaused = true;
+            level = 3;
+            localStorage.setItem('holoUnlocked', 'true');
+            addHoloSwatch();
+            setHolo();
+            showModal("💎 HOLO THEME UNLOCKED! 💎", "You are halfway to the Grand Prize!<br>WARNING: LEVEL 3 IS HARD.", false, true);
+        }
+        
+        // GRAND PRIZE (75 pts)
+        if (score === 75) {
+            isGameOver = true;
+            showModal("🎉 YOU WON! 🎉", "You survived the apocalypse.", true, false);
+        }
+    }
+
+    function endGame(reason) {
+        isGameOver = true;
+        showModal("Game Over", reason + "<br>Score: " + score, false, false);
+    }
+
+    function showModal(title, body, isWin, isCheckpoint) {
+        const overlay = document.getElementById('msgOverlay');
+        const coupon = document.getElementById('couponBox');
+        const retryBtn = document.getElementById('retryBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        
+        document.getElementById('msgTitle').innerText = title;
+        document.getElementById('msgBody').innerHTML = body;
+        overlay.style.display = 'block';
+        
+        coupon.style.display = 'none';
+        closeBtn.style.display = 'none';
+
+        if(isWin) {
+            // Grand Prize
+            coupon.style.display = 'block';
+            retryBtn.style.display = 'none';
+            closeBtn.style.display = 'inline-block';
+        } else if (isCheckpoint) {
+            // Continue button
+            retryBtn.innerText = "Continue Level " + level;
+            retryBtn.onclick = function() {
+                overlay.style.display = 'none';
+                isPaused = false;
+                requestAnimationFrame(updateGame);
+                retryBtn.innerText = "Try Again";
+                retryBtn.onclick = resetGame;
+            };
+        } else {
+            // Loss
+            retryBtn.innerText = "Try Again";
+            retryBtn.onclick = resetGame;
+            closeBtn.style.display = 'inline-block';
+        }
+    }
+
+    function resetGame() {
+        document.getElementById('msgOverlay').style.display = 'none';
+        score = 0;
+        level = 1; 
+        items = [];
+        isGameOver = false;
+        isPaused = false;
+        player.x = canvas.width / 2 - player.width / 2;
+        gameLoop = requestAnimationFrame(updateGame);
+    }
+
+    function closeGame() { location.reload(); }
 
     // --- CHAOS MODE ---
     let chaosAudio = null; 
@@ -368,12 +625,10 @@ END:VCALENDAR`;
         document.getElementById('mainCard').classList.add('chaos-spin');
         document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA";
         document.querySelector('.forbidden-btn').style.display = 'none';
-        
         chaosAudio = new Audio('heman.mp3');
         chaosAudio.loop = true; 
         chaosAudio.volume = 1.0; 
         chaosAudio.play().catch(e => console.log("Audio blocked"));
-        
         setTimeout(() => { alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄"); }, 500);
     }
 </script>
