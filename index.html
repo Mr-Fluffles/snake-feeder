@@ -24,7 +24,8 @@
             margin: 0;
             text-align: center;
             transition: background-color 0.5s ease;
-            overflow-x: hidden;
+            overflow: hidden; 
+            touch-action: manipulation; /* Improves tapping response */
         }
         .container {
             background: var(--card);
@@ -35,7 +36,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
             z-index: 10;
-            transition: transform 1s;
+            transition: transform 1s, opacity 0.5s;
         }
         h1 { margin-top: 0; font-size: 1.8rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
@@ -78,9 +79,15 @@
             color: var(--accent);
             margin-top: 20px;
         }
+
+        /* GAME BUTTON STYLE */
+        .game-btn {
+            background: #ff9800; /* Orange */
+            color: white;
+            margin-bottom: 20px;
+        }
         
-        /* INPUT STYLING */
-        input[type="number"] {
+        input[type="number"], input[type="time"] {
             background: #333;
             border: none;
             color: white;
@@ -91,59 +98,14 @@
             font-size: 1rem;
             font-weight: bold;
         }
-        input[type="time"] {
-            background: #333;
-            border: none;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-        }
         
-        /* --- PASTEL PICKER UI --- */
-        .theme-label {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .pastel-swatches {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        .swatch {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.2s;
-        }
-        .swatch:hover { transform: scale(1.1); }
+        .theme-label { margin-top: 30px; font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
+        .pastel-swatches { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .swatch { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+        .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
+        input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
         
-        .manual-picker-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-        input[type="color"] {
-            border: none;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            background: none;
-            border-radius: 50%;
-        }
-        
-        /* --- THE GLITCH TRAP --- */
+        /* THE GLITCH TRAP */
         .forbidden-btn {
             background-color: #220000;
             color: #ff3333;
@@ -160,27 +122,19 @@
             box-shadow: 0 0 5px #ff0000;
             text-transform: uppercase;
             letter-spacing: 1px;
-            /* Make sure it sits on top so clicks register instantly */
             position: relative; 
             z-index: 100;
         }
         
-        @keyframes reveal {
-            from { opacity: 0; }
-            to { opacity: 0.8; }
-        }
-
+        @keyframes reveal { from { opacity: 0; } to { opacity: 0.8; } }
         @keyframes glitch-shake {
-            0% { transform: translate(0, 0); }
-            90% { transform: translate(0, 0); }
-            92% { transform: translate(-2px, 2px); }
-            94% { transform: translate(2px, -2px); }
-            96% { transform: translate(-2px, -2px); }
-            98% { transform: translate(2px, 2px); }
+            0% { transform: translate(0, 0); } 90% { transform: translate(0, 0); }
+            92% { transform: translate(-2px, 2px); } 94% { transform: translate(2px, -2px); }
+            96% { transform: translate(-2px, -2px); } 98% { transform: translate(2px, 2px); }
             100% { transform: translate(0, 0); }
         }
 
-        /* CHAOS MODE STYLES */
+        /* CHAOS MODE */
         body.chaos {
             background-image: url('https://media.giphy.com/media/M7gtacN7aPNsc/giphy.gif');
             background-size: cover;
@@ -188,41 +142,64 @@
             background-position: center;
             animation: rainbow-flash 0.2s infinite;
         }
-        .container.chaos-spin {
-            animation: spin 3s infinite linear;
-            border: 5px solid hotpink;
-        }
-        @keyframes rainbow-flash {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
+        .container.chaos-spin { animation: spin 3s infinite linear; border: 5px solid hotpink; }
+        @keyframes rainbow-flash { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
+        /* GAME STYLES */
+        .game-ui {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 50;
+        }
+        .score-board {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            background: rgba(255,255,255,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+        .turkey-target {
+            position: absolute;
+            font-size: 4rem;
+            cursor: pointer;
+            user-select: none;
+            animation: popUp 0.3s ease-out;
+        }
+        @keyframes popUp {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
 
+<div class="game-ui" id="gameUI">
+    <div class="score-board">Score: <span id="scoreVal">0</span> 🦃</div>
+    <p style="color: #666; font-size: 0.9rem;">(Refresh app to stop)</p>
+</div>
+
 <div class="container" id="mainCard">
     <span class="emoji">🐍</span>
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
+    <button class="game-btn" onclick="startGame()">🦃 Play Turkey Hunt</button>
+
     <div class="input-group">
         Every <input type="number" id="interval" value="21"> days
     </div>
-    
     <div class="input-group">
         At <input type="time" id="feedTime" value="09:00">
     </div>
 
-    <div class="status" id="statusDisplay">
-        Loading...
-    </div>
+    <div class="status" id="statusDisplay">Loading...</div>
 
     <button onclick="feedSnake()">I Fed The Snek!</button>
-    
     <button class="secondary" onclick="addToCalendar()">📅 Set Recurring Alarm</button>
 
     <p class="small-text" id="lastFedText"></p>
@@ -235,7 +212,6 @@
         <div class="swatch" style="background: #FFCCBC;" onclick="setTheme('#FFCCBC')"></div>
         <div class="swatch" style="background: #F8BBD0;" onclick="setTheme('#F8BBD0')"></div>
     </div>
-
     <div class="manual-picker-wrapper">
         or custom: <input type="color" id="bgPicker" value="#C8E6C9">
     </div>
@@ -244,7 +220,7 @@
 </div>
 
 <script>
-    // --- Standard Logic ---
+    // --- APP LOGIC ---
     const savedDate = localStorage.getItem('lastFed');
     const savedInterval = localStorage.getItem('interval');
     const savedColor = localStorage.getItem('themeColor');
@@ -255,12 +231,9 @@
     
     const initialColor = savedColor || '#C8E6C9';
     setTheme(initialColor, false);
-
     updateDisplay();
 
-    document.getElementById('bgPicker').addEventListener('input', function(e) {
-        setTheme(e.target.value);
-    });
+    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
 
     function setTheme(color, save = true) {
         document.documentElement.style.setProperty('--bg', color);
@@ -287,16 +260,13 @@
             statusDiv.style.color = "var(--danger)";
             return;
         }
-
         const lastDate = new Date(lastFed);
         const nextDate = new Date(lastDate);
         nextDate.setDate(lastDate.getDate() + interval);
-        
         const today = new Date();
         today.setHours(0,0,0,0);
         const tempNext = new Date(nextDate);
         tempNext.setHours(0,0,0,0);
-        
         const diffTime = tempNext - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
@@ -313,19 +283,14 @@
     function addToCalendar() {
         const interval = parseInt(document.getElementById('interval').value) || 21;
         const timeVal = document.getElementById('feedTime').value || "09:00";
-        
         const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
         const nextFeed = new Date(lastFed);
         nextFeed.setDate(nextFeed.getDate() + interval);
-        
         const year = nextFeed.getFullYear();
         const month = (nextFeed.getMonth() + 1).toString().padStart(2, '0');
         const day = nextFeed.getDate().toString().padStart(2, '0');
-        
         const timeParts = timeVal.split(':');
-        const hours = timeParts[0];
-        const minutes = timeParts[1];
-        const fullDateTime = `${year}${month}${day}T${hours}${minutes}00`;
+        const fullDateTime = `${year}${month}${day}T${timeParts[0]}${timeParts[1]}00`;
 
         const icsMsg = `BEGIN:VCALENDAR
 VERSION:2.0
@@ -333,7 +298,7 @@ BEGIN:VEVENT
 DTSTART:${fullDateTime}
 RRULE:FREQ=DAILY;INTERVAL=${interval}
 SUMMARY:🐍 Feed the Danger Noodle
-DESCRIPTION:Repeats every ${interval} days at ${timeVal}.
+DESCRIPTION:Repeats every ${interval} days.
 BEGIN:VALARM
 TRIGGER:-PT0M
 ACTION:DISPLAY
@@ -353,29 +318,63 @@ END:VCALENDAR`;
         document.body.removeChild(a);
     }
 
-    // --- CHAOS MODE (INSTANT TRIGGER) ---
-    let chaosAudio = null; 
+    // --- GAME LOGIC ---
+    let score = 0;
+    let gameInterval;
 
-    function activateChaos() {
-        // NO CONFIRMATION. JUST CHAOS.
+    function startGame() {
+        // Hide Main App
+        document.getElementById('mainCard').style.display = 'none';
+        // Show Game UI
+        document.getElementById('gameUI').style.display = 'block';
         
+        // Start spawning turkeys
+        spawnTurkey();
+        gameInterval = setInterval(spawnTurkey, 800); // New turkey every 0.8 seconds
+    }
+
+    function spawnTurkey() {
+        const turkey = document.createElement('div');
+        turkey.innerText = "🦃";
+        turkey.classList.add('turkey-target');
+        
+        // Random Position (avoiding edges)
+        const x = Math.random() * (window.innerWidth - 60);
+        const y = Math.random() * (window.innerHeight - 100) + 50;
+        
+        turkey.style.left = x + 'px';
+        turkey.style.top = y + 'px';
+        
+        // Click Handler
+        turkey.onclick = function() {
+            score++;
+            document.getElementById('scoreVal').innerText = score;
+            turkey.innerText = "💥"; // Explosion effect
+            setTimeout(() => turkey.remove(), 200);
+        };
+        
+        document.body.appendChild(turkey);
+        
+        // Remove turkey if not clicked after 2 seconds (keep screen clean)
+        setTimeout(() => {
+            if(turkey.parentNode) turkey.remove();
+        }, 2000);
+    }
+
+    // --- CHAOS MODE ---
+    let chaosAudio = null; 
+    function activateChaos() {
         document.body.classList.add('chaos'); 
         document.getElementById('mainCard').classList.add('chaos-spin');
         document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA";
-        
-        // Hide the button immediately so she can't spam it (or turn it off)
         document.querySelector('.forbidden-btn').style.display = 'none';
         
-        // Play Audio
         chaosAudio = new Audio('heman.mp3');
         chaosAudio.loop = true; 
         chaosAudio.volume = 1.0; 
-        chaosAudio.play().catch(e => console.log("Audio blocked: " + e));
+        chaosAudio.play().catch(e => console.log("Audio blocked"));
         
-        // Delay the "You messed up" message just enough so she sees the rainbows first
-        setTimeout(() => {
-            alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄\n(Refresh the page to fix it... if you can)");
-        }, 500);
+        setTimeout(() => { alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄"); }, 500);
     }
 </script>
 
