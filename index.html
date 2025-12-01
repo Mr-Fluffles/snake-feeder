@@ -24,8 +24,11 @@
             margin: 0;
             text-align: center;
             transition: background 0.5s ease;
-            overflow: hidden; 
-            touch-action: none;
+            
+            /* --- THE FIX: ALLOW SCROLLING --- */
+            overflow-y: auto; 
+            touch-action: manipulation; 
+            padding-bottom: 50px; /* Extra space at bottom for scrolling */
         }
         
         /* HOLOGRAPHIC THEME ANIMATION */
@@ -50,6 +53,7 @@
             position: relative;
             z-index: 10;
             transition: transform 1s, opacity 0.5s;
+            margin-top: 20px; /* Ensure space at top */
         }
         h1 { margin-top: 0; font-size: 1.8rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
@@ -162,12 +166,20 @@
         /* GAME CANVAS STYLES */
         canvas {
             display: none;
-            position: absolute;
+            position: fixed; /* Fixed so it covers screen even if scrolled */
             top: 0;
             left: 0;
             z-index: 50;
             background: rgba(0,0,0,0.85);
+            /* Lock touch actions ONLY on the game canvas */
+            touch-action: none;
         }
+        
+        /* Stop scrolling ONLY when game is active class is added */
+        body.game-active {
+            overflow: hidden;
+        }
+
         .game-overlay {
             display: none;
             position: fixed;
@@ -275,7 +287,6 @@
     if (savedTime) document.getElementById('feedTime').value = savedTime;
     
     const initialColor = savedColor || '#C8E6C9';
-    // If it was a hex code, set it. If it was 'holo', enable holo.
     if(initialColor === 'holo') {
         document.body.classList.add('holo-theme');
     } else {
@@ -291,7 +302,7 @@
     document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
 
     function setTheme(color, save = true) {
-        document.body.classList.remove('holo-theme'); // Turn off holo if picking color
+        document.body.classList.remove('holo-theme'); 
         document.documentElement.style.setProperty('--bg', color);
         document.getElementById('bgPicker').value = color;
         if (save) localStorage.setItem('themeColor', color);
@@ -420,6 +431,10 @@ END:VCALENDAR`;
 
     function initGame() {
         document.getElementById('mainCard').style.display = 'none';
+        
+        // --- LOCK SCROLLING ONLY WHEN GAME STARTS ---
+        document.body.classList.add('game-active');
+        
         canvas.style.display = 'block';
         document.getElementById('gameHint').style.display = 'block';
         
@@ -455,29 +470,25 @@ END:VCALENDAR`;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // UI
         ctx.fillStyle = "white";
         ctx.font = "30px Arial";
         ctx.fillText("Score: " + score, 20, 50);
         
-        // Level Indicator
-        let color = "#00e676"; // Lvl 1
-        if(level === 2) color = "#FFD700"; // Lvl 2
-        if(level === 3) color = "#ff9a9e"; // Lvl 3
+        let color = "#00e676";
+        if(level === 2) color = "#FFD700";
+        if(level === 3) color = "#ff9a9e";
         ctx.fillStyle = color;
         ctx.font = "20px Arial";
         ctx.fillText("Level " + level, 20, 80);
 
-        // Player
         ctx.font = "50px Arial";
         ctx.fillText(player.icon, player.x, player.y + 50);
 
         frameCount++;
         
-        // SPAWN RATES & DIFFICULTY
         let currentSpawnRate = 50;
         let speedMult = 1;
-        let badThreshold = 0.2; // 20% bad items
+        let badThreshold = 0.2; 
         
         if (level === 2) { 
             currentSpawnRate = 40; 
@@ -485,9 +496,9 @@ END:VCALENDAR`;
             badThreshold = 0.35; 
         }
         if (level === 3) { 
-            currentSpawnRate = 25; // Chaos
+            currentSpawnRate = 25; 
             speedMult = 2.0; 
-            badThreshold = 0.5; // 50% bad items!
+            badThreshold = 0.5; 
         }
 
         if(frameCount % currentSpawnRate === 0) {
@@ -513,13 +524,11 @@ END:VCALENDAR`;
             });
         }
 
-        // Update Items
         for (let i = 0; i < items.length; i++) {
             let item = items[i];
             item.y += item.speed;
             ctx.fillText(item.icon, item.x, item.y + 50);
             
-            // Collision
             if (item.x < player.x + player.width && item.x + 50 > player.x &&
                 item.y < player.y + player.height && item.y + 50 > player.y) {
                 if(item.type === 'bad') {
@@ -537,7 +546,6 @@ END:VCALENDAR`;
     }
 
     function checkLevelUp() {
-        // LEVEL 2 UNLOCK (25 pts)
         if (score === 25 && level === 1) {
             isPaused = true;
             level = 2;
@@ -546,8 +554,6 @@ END:VCALENDAR`;
             setTheme('#FFD700'); 
             showModal("✨ GOLD UNLOCKED! ✨", "New Theme Acquired!<br>Next Reward at 50!", false, true);
         }
-        
-        // LEVEL 3 UNLOCK (50 pts)
         if (score === 50 && level === 2) {
             isPaused = true;
             level = 3;
@@ -556,8 +562,6 @@ END:VCALENDAR`;
             setHolo();
             showModal("💎 HOLO THEME UNLOCKED! 💎", "You are halfway to the Grand Prize!<br>WARNING: LEVEL 3 IS HARD.", false, true);
         }
-        
-        // GRAND PRIZE (75 pts)
         if (score === 75) {
             isGameOver = true;
             showModal("🎉 YOU WON! 🎉", "You survived the apocalypse.", true, false);
@@ -583,12 +587,10 @@ END:VCALENDAR`;
         closeBtn.style.display = 'none';
 
         if(isWin) {
-            // Grand Prize
             coupon.style.display = 'block';
             retryBtn.style.display = 'none';
             closeBtn.style.display = 'inline-block';
         } else if (isCheckpoint) {
-            // Continue button
             retryBtn.innerText = "Continue Level " + level;
             retryBtn.onclick = function() {
                 overlay.style.display = 'none';
@@ -598,7 +600,6 @@ END:VCALENDAR`;
                 retryBtn.onclick = resetGame;
             };
         } else {
-            // Loss
             retryBtn.innerText = "Try Again";
             retryBtn.onclick = resetGame;
             closeBtn.style.display = 'inline-block';
