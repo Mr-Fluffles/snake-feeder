@@ -25,10 +25,10 @@
             text-align: center;
             transition: background 0.5s ease;
             
-            /* --- THE FIX: ALLOW SCROLLING --- */
+            /* FIX: ALLOW SCROLLING */
             overflow-y: auto; 
             touch-action: manipulation; 
-            padding-bottom: 50px; /* Extra space at bottom for scrolling */
+            padding-bottom: 50px;
         }
         
         /* HOLOGRAPHIC THEME ANIMATION */
@@ -45,15 +45,16 @@
 
         .container {
             background: var(--card);
-            padding: 2rem;
+            /* --- THE FIX: MAKE CARD SMALLER --- */
+            padding: 1.5rem; /* Reduced padding */
             border-radius: 20px;
-            width: 85%;
-            max-width: 400px;
+            width: 75%; /* Reduced width from 85% */
+            max-width: 350px; /* Reduced max-width slightly */
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
             z-index: 10;
             transition: transform 1s, opacity 0.5s;
-            margin-top: 20px; /* Ensure space at top */
+            margin-top: 20px;
         }
         h1 { margin-top: 0; font-size: 1.8rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
@@ -166,19 +167,15 @@
         /* GAME CANVAS STYLES */
         canvas {
             display: none;
-            position: fixed; /* Fixed so it covers screen even if scrolled */
+            position: fixed;
             top: 0;
             left: 0;
             z-index: 50;
             background: rgba(0,0,0,0.85);
-            /* Lock touch actions ONLY on the game canvas */
             touch-action: none;
         }
         
-        /* Stop scrolling ONLY when game is active class is added */
-        body.game-active {
-            overflow: hidden;
-        }
+        body.game-active { overflow: hidden; }
 
         .game-overlay {
             display: none;
@@ -432,7 +429,7 @@ END:VCALENDAR`;
     function initGame() {
         document.getElementById('mainCard').style.display = 'none';
         
-        // --- LOCK SCROLLING ONLY WHEN GAME STARTS ---
+        //LOCK SCROLLING ONLY WHEN GAME STARTS
         document.body.classList.add('game-active');
         
         canvas.style.display = 'block';
