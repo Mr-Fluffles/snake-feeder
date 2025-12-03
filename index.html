@@ -24,14 +24,11 @@
             margin: 0;
             text-align: center;
             transition: background 0.5s ease;
-            
-            /* FIX: ALLOW SCROLLING */
             overflow-y: auto; 
             touch-action: manipulation; 
             padding-bottom: 50px;
         }
         
-        /* HOLOGRAPHIC THEME ANIMATION */
         body.holo-theme {
             background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
             background-size: 800% 800%;
@@ -45,11 +42,10 @@
 
         .container {
             background: var(--card);
-            /* --- THE FIX: MAKE CARD SMALLER --- */
-            padding: 1.5rem; /* Reduced padding */
+            padding: 1.5rem;
             border-radius: 20px;
-            width: 75%; /* Reduced width from 85% */
-            max-width: 350px; /* Reduced max-width slightly */
+            width: 75%;
+            max-width: 350px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
             z-index: 10;
@@ -59,25 +55,18 @@
         h1 { margin-top: 0; font-size: 1.8rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
         
-        .input-group { 
-            margin: 15px 0; 
-            font-size: 1.1rem; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
         .status {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             margin: 20px 0;
             padding: 15px;
             background: #333;
             border-radius: 10px;
             font-weight: bold;
+            border: 1px solid #444;
         }
-        button {
+        
+        /* Main Action Button */
+        button.feed-btn {
             background: var(--accent);
             color: #000;
             border: none;
@@ -91,18 +80,62 @@
             transition: transform 0.1s;
         }
         button:active { transform: scale(0.95); }
-        button.secondary {
+        
+        .secondary {
             background: transparent;
             border: 2px solid var(--accent);
             color: var(--accent);
             margin-top: 20px;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
         }
 
-        /* GAME BUTTON STYLE */
         .game-btn {
-            background: #ff9800; /* Orange */
+            background: #ff9800;
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
             margin-bottom: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        /* SETTINGS DRAWER */
+        .settings-toggle {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            margin-top: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .settings-panel {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group { 
+            margin: 15px 0; 
+            font-size: 1rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: #aaa;
         }
         
         input[type="number"], input[type="time"] {
@@ -117,20 +150,20 @@
             font-weight: bold;
         }
         
-        .theme-label { margin-top: 30px; font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
-        .pastel-swatches { display: flex; justify-content: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .swatch { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+        .theme-label { margin-top: 20px; font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
+        .pastel-swatches { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
         .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
         input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
         
-        /* THE GLITCH TRAP */
+        /* TRAP BUTTON */
         .forbidden-btn {
             background-color: #220000;
             color: #ff3333;
             font-family: "Courier New", monospace;
             font-size: 0.7rem;
             padding: 10px;
-            margin-top: 50px;
+            margin-top: 30px;
             border: 1px solid #ff0000;
             border-radius: 5px;
             opacity: 0;
@@ -142,8 +175,10 @@
             letter-spacing: 1px;
             position: relative; 
             z-index: 100;
+            width: 100%;
         }
         
+        /* ANIMATIONS & GAME CANVAS (Same as before) */
         @keyframes reveal { from { opacity: 0; } to { opacity: 0.8; } }
         @keyframes glitch-shake {
             0% { transform: translate(0, 0); } 90% { transform: translate(0, 0); }
@@ -151,8 +186,6 @@
             96% { transform: translate(-2px, -2px); } 98% { transform: translate(2px, 2px); }
             100% { transform: translate(0, 0); }
         }
-
-        /* CHAOS MODE */
         body.chaos {
             background-image: url('https://media.giphy.com/media/M7gtacN7aPNsc/giphy.gif');
             background-size: cover;
@@ -164,58 +197,11 @@
         @keyframes rainbow-flash { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* GAME CANVAS STYLES */
-        canvas {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 50;
-            background: rgba(0,0,0,0.85);
-            touch-action: none;
-        }
-        
+        canvas { display: none; position: fixed; top: 0; left: 0; z-index: 50; background: rgba(0,0,0,0.85); touch-action: none; }
         body.game-active { overflow: hidden; }
-
-        .game-overlay {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            color: #000;
-            padding: 20px;
-            border-radius: 15px;
-            z-index: 60;
-            text-align: center;
-            width: 80%;
-            max-width: 300px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        
-        .coupon {
-            border: 3px dashed #333;
-            background: #fffbe6;
-            padding: 15px;
-            margin-top: 10px;
-            font-family: "Courier New", monospace;
-            color: #333;
-            transform: rotate(-2deg);
-        }
-        
-        .control-hint {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            color: rgba(255,255,255,0.5);
-            font-size: 0.8rem;
-            z-index: 55;
-            display: none;
-            pointer-events: none;
-        }
-
+        .game-overlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #000; padding: 20px; border-radius: 15px; z-index: 60; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .coupon { border: 3px dashed #333; background: #fffbe6; padding: 15px; margin-top: 10px; font-family: "Courier New", monospace; color: #333; transform: rotate(-2deg); }
+        .control-hint { position: fixed; bottom: 20px; width: 100%; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; z-index: 55; display: none; pointer-events: none; }
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
@@ -242,33 +228,37 @@
     
     <button class="game-btn" onclick="initGame()">🦃 Catch The Dinner</button>
 
-    <div class="input-group">
-        Every <input type="number" id="interval" value="21"> days
-    </div>
-    <div class="input-group">
-        At <input type="time" id="feedTime" value="09:00">
-    </div>
-
     <div class="status" id="statusDisplay">Loading...</div>
 
-    <button onclick="feedSnake()">I Fed The Snek!</button>
-    <button class="secondary" onclick="addToCalendar()">📅 Set Recurring Alarm</button>
-
+    <button class="feed-btn" onclick="confirmFeed()">I Fed The Snek!</button>
     <p class="small-text" id="lastFedText"></p>
 
-    <span class="theme-label">Choose a Vibe:</span>
-    <div class="pastel-swatches" id="swatchContainer">
-        <div class="swatch" style="background: #C8E6C9;" onclick="setTheme('#C8E6C9')"></div>
-        <div class="swatch" style="background: #E1BEE7;" onclick="setTheme('#E1BEE7')"></div>
-        <div class="swatch" style="background: #B3E5FC;" onclick="setTheme('#B3E5FC')"></div>
-        <div class="swatch" style="background: #FFCCBC;" onclick="setTheme('#FFCCBC')"></div>
-        <div class="swatch" style="background: #F8BBD0;" onclick="setTheme('#F8BBD0')"></div>
-    </div>
-    <div class="manual-picker-wrapper">
-        or custom: <input type="color" id="bgPicker" value="#C8E6C9">
-    </div>
+    <button class="settings-toggle" onclick="toggleSettings()">⚙️ Settings</button>
 
-    <button class="forbidden-btn" onclick="activateChaos()">⚠️ Admin Debug Mode<br>(Do Not Touch)</button>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="input-group">
+            Feed every <input type="number" id="interval" value="21" onchange="saveSettings()"> days
+        </div>
+        <div class="input-group">
+            At <input type="time" id="feedTime" value="09:00" onchange="saveSettings()">
+        </div>
+        
+        <button class="secondary" onclick="addToCalendar()">📅 Update Calendar</button>
+
+        <span class="theme-label">Choose a Vibe:</span>
+        <div class="pastel-swatches" id="swatchContainer">
+            <div class="swatch" style="background: #C8E6C9;" onclick="setTheme('#C8E6C9')"></div>
+            <div class="swatch" style="background: #E1BEE7;" onclick="setTheme('#E1BEE7')"></div>
+            <div class="swatch" style="background: #B3E5FC;" onclick="setTheme('#B3E5FC')"></div>
+            <div class="swatch" style="background: #FFCCBC;" onclick="setTheme('#FFCCBC')"></div>
+            <div class="swatch" style="background: #F8BBD0;" onclick="setTheme('#F8BBD0')"></div>
+        </div>
+        <div class="manual-picker-wrapper">
+            custom: <input type="color" id="bgPicker" value="#C8E6C9">
+        </div>
+
+        <button class="forbidden-btn" onclick="activateChaos()">⚠️ Admin Debug Mode<br>(Do Not Touch)</button>
+    </div>
 </div>
 
 <script>
@@ -294,6 +284,22 @@
     
     if(goldUnlocked === 'true') addGoldSwatch();
     if(holoUnlocked === 'true') addHoloSwatch();
+
+    // --- SETTINGS LOGIC ---
+    function toggleSettings() {
+        const panel = document.getElementById('settingsPanel');
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+        }
+    }
+
+    function saveSettings() {
+        localStorage.setItem('interval', document.getElementById('interval').value);
+        localStorage.setItem('feedTime', document.getElementById('feedTime').value);
+        updateDisplay();
+    }
 
     // --- THEME LOGIC ---
     document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
@@ -336,6 +342,12 @@
     }
 
     // --- STANDARD APP FUNCTIONS ---
+    function confirmFeed() {
+        if(confirm("Are you sure you fed the snek? This will reset the timer.")) {
+            feedSnake();
+        }
+    }
+
     function feedSnake() {
         const now = new Date();
         localStorage.setItem('lastFed', now.toISOString());
@@ -413,7 +425,7 @@ END:VCALENDAR`;
         document.body.removeChild(a);
     }
 
-    // --- GAME LOGIC ---
+    // --- GAME LOGIC (Unchanged but ensuring scrolling lock works) ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     let gameLoop;
@@ -421,40 +433,26 @@ END:VCALENDAR`;
     let isGameOver = false;
     let isPaused = false;
     let level = 1;
-
     let player = { x: 0, y: 0, width: 60, height: 60, icon: '🐍' };
     let items = [];
     let frameCount = 0;
 
     function initGame() {
         document.getElementById('mainCard').style.display = 'none';
-        
-        //LOCK SCROLLING ONLY WHEN GAME STARTS
         document.body.classList.add('game-active');
-        
         canvas.style.display = 'block';
         document.getElementById('gameHint').style.display = 'block';
-        
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        
         player.x = canvas.width / 2 - player.width / 2;
         player.y = canvas.height - 100;
-        
-        score = 0;
-        level = 1;
-        items = [];
-        isGameOver = false;
-        isPaused = false;
-        
+        score = 0; level = 1; items = []; isGameOver = false; isPaused = false;
         window.addEventListener('touchstart', handleTouch);
         window.addEventListener('mousedown', handleMouse);
         gameLoop = requestAnimationFrame(updateGame);
     }
-
     function handleTouch(e) { movePlayer(e.touches[0].clientX); }
     function handleMouse(e) { movePlayer(e.clientX); }
-    
     function movePlayer(inputX) {
         if(inputX < canvas.width / 2) player.x -= 40;
         else player.x += 40;
@@ -464,171 +462,47 @@ END:VCALENDAR`;
 
     function updateGame() {
         if (isGameOver || isPaused) return;
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = "white";
-        ctx.font = "30px Arial";
-        ctx.fillText("Score: " + score, 20, 50);
-        
-        let color = "#00e676";
-        if(level === 2) color = "#FFD700";
-        if(level === 3) color = "#ff9a9e";
-        ctx.fillStyle = color;
-        ctx.font = "20px Arial";
-        ctx.fillText("Level " + level, 20, 80);
-
-        ctx.font = "50px Arial";
-        ctx.fillText(player.icon, player.x, player.y + 50);
-
+        ctx.fillStyle = "white"; ctx.font = "30px Arial"; ctx.fillText("Score: " + score, 20, 50);
+        let color = "#00e676"; if(level === 2) color = "#FFD700"; if(level === 3) color = "#ff9a9e";
+        ctx.fillStyle = color; ctx.font = "20px Arial"; ctx.fillText("Level " + level, 20, 80);
+        ctx.font = "50px Arial"; ctx.fillText(player.icon, player.x, player.y + 50);
         frameCount++;
-        
-        let currentSpawnRate = 50;
-        let speedMult = 1;
-        let badThreshold = 0.2; 
-        
-        if (level === 2) { 
-            currentSpawnRate = 40; 
-            speedMult = 1.5; 
-            badThreshold = 0.35; 
-        }
-        if (level === 3) { 
-            currentSpawnRate = 25; 
-            speedMult = 2.0; 
-            badThreshold = 0.5; 
-        }
-
+        let currentSpawnRate = 50; let speedMult = 1; let badThreshold = 0.2; 
+        if (level === 2) { currentSpawnRate = 40; speedMult = 1.5; badThreshold = 0.35; }
+        if (level === 3) { currentSpawnRate = 25; speedMult = 2.0; badThreshold = 0.5; }
         if(frameCount % currentSpawnRate === 0) {
-            let type = 'good';
-            let icon = '🦃';
-            
-            if (Math.random() < badThreshold) {
-                type = 'bad';
-                icon = '🍞'; 
-            } else {
-                const foods = ['🦃', '🥧', '🐀'];
-                icon = foods[Math.floor(Math.random() * foods.length)];
-            }
-            
+            let type = 'good'; let icon = '🦃';
+            if (Math.random() < badThreshold) { type = 'bad'; icon = '🍞'; } else { const foods = ['🦃', '🥧', '🐀']; icon = foods[Math.floor(Math.random() * foods.length)]; }
             let speed = (Math.random() * 3 + 3) * speedMult;
-
-            items.push({
-                x: Math.random() * (canvas.width - 50),
-                y: -50,
-                speed: speed,
-                icon: icon,
-                type: type
-            });
+            items.push({ x: Math.random() * (canvas.width - 50), y: -50, speed: speed, icon: icon, type: type });
         }
-
         for (let i = 0; i < items.length; i++) {
-            let item = items[i];
-            item.y += item.speed;
-            ctx.fillText(item.icon, item.x, item.y + 50);
-            
-            if (item.x < player.x + player.width && item.x + 50 > player.x &&
-                item.y < player.y + player.height && item.y + 50 > player.y) {
-                if(item.type === 'bad') {
-                    endGame("You ate the fruitcake! 🤢");
-                } else {
-                    score++;
-                    items.splice(i, 1);
-                    i--;
-                    checkLevelUp();
-                }
+            let item = items[i]; item.y += item.speed; ctx.fillText(item.icon, item.x, item.y + 50);
+            if (item.x < player.x + player.width && item.x + 50 > player.x && item.y < player.y + player.height && item.y + 50 > player.y) {
+                if(item.type === 'bad') { endGame("You ate the fruitcake! 🤢"); } else { score++; items.splice(i, 1); i--; checkLevelUp(); }
             }
             if (item.y > canvas.height) { items.splice(i, 1); i--; }
         }
         gameLoop = requestAnimationFrame(updateGame);
     }
-
     function checkLevelUp() {
-        if (score === 25 && level === 1) {
-            isPaused = true;
-            level = 2;
-            localStorage.setItem('goldUnlocked', 'true');
-            addGoldSwatch();
-            setTheme('#FFD700'); 
-            showModal("✨ GOLD UNLOCKED! ✨", "New Theme Acquired!<br>Next Reward at 50!", false, true);
-        }
-        if (score === 50 && level === 2) {
-            isPaused = true;
-            level = 3;
-            localStorage.setItem('holoUnlocked', 'true');
-            addHoloSwatch();
-            setHolo();
-            showModal("💎 HOLO THEME UNLOCKED! 💎", "You are halfway to the Grand Prize!<br>WARNING: LEVEL 3 IS HARD.", false, true);
-        }
-        if (score === 75) {
-            isGameOver = true;
-            showModal("🎉 YOU WON! 🎉", "You survived the apocalypse.", true, false);
-        }
+        if (score === 25 && level === 1) { isPaused = true; level = 2; localStorage.setItem('goldUnlocked', 'true'); addGoldSwatch(); setTheme('#FFD700'); showModal("✨ GOLD UNLOCKED! ✨", "New Theme Acquired!<br>Next Reward at 50!", false, true); }
+        if (score === 50 && level === 2) { isPaused = true; level = 3; localStorage.setItem('holoUnlocked', 'true'); addHoloSwatch(); setHolo(); showModal("💎 HOLO THEME UNLOCKED! 💎", "You are halfway to the Grand Prize!<br>WARNING: LEVEL 3 IS HARD.", false, true); }
+        if (score === 75) { isGameOver = true; showModal("🎉 YOU WON! 🎉", "You survived the apocalypse.", true, false); }
     }
-
-    function endGame(reason) {
-        isGameOver = true;
-        showModal("Game Over", reason + "<br>Score: " + score, false, false);
-    }
-
+    function endGame(reason) { isGameOver = true; showModal("Game Over", reason + "<br>Score: " + score, false, false); }
     function showModal(title, body, isWin, isCheckpoint) {
-        const overlay = document.getElementById('msgOverlay');
-        const coupon = document.getElementById('couponBox');
-        const retryBtn = document.getElementById('retryBtn');
-        const closeBtn = document.getElementById('closeBtn');
-        
-        document.getElementById('msgTitle').innerText = title;
-        document.getElementById('msgBody').innerHTML = body;
-        overlay.style.display = 'block';
-        
-        coupon.style.display = 'none';
-        closeBtn.style.display = 'none';
-
-        if(isWin) {
-            coupon.style.display = 'block';
-            retryBtn.style.display = 'none';
-            closeBtn.style.display = 'inline-block';
-        } else if (isCheckpoint) {
-            retryBtn.innerText = "Continue Level " + level;
-            retryBtn.onclick = function() {
-                overlay.style.display = 'none';
-                isPaused = false;
-                requestAnimationFrame(updateGame);
-                retryBtn.innerText = "Try Again";
-                retryBtn.onclick = resetGame;
-            };
-        } else {
-            retryBtn.innerText = "Try Again";
-            retryBtn.onclick = resetGame;
-            closeBtn.style.display = 'inline-block';
-        }
+        const overlay = document.getElementById('msgOverlay'); const coupon = document.getElementById('couponBox'); const retryBtn = document.getElementById('retryBtn'); const closeBtn = document.getElementById('closeBtn');
+        document.getElementById('msgTitle').innerText = title; document.getElementById('msgBody').innerHTML = body; overlay.style.display = 'block'; coupon.style.display = 'none'; closeBtn.style.display = 'none';
+        if(isWin) { coupon.style.display = 'block'; retryBtn.style.display = 'none'; closeBtn.style.display = 'inline-block'; } 
+        else if (isCheckpoint) { retryBtn.innerText = "Continue Level " + level; retryBtn.onclick = function() { overlay.style.display = 'none'; isPaused = false; requestAnimationFrame(updateGame); retryBtn.innerText = "Try Again"; retryBtn.onclick = resetGame; }; } 
+        else { retryBtn.innerText = "Try Again"; retryBtn.onclick = resetGame; closeBtn.style.display = 'inline-block'; }
     }
-
-    function resetGame() {
-        document.getElementById('msgOverlay').style.display = 'none';
-        score = 0;
-        level = 1; 
-        items = [];
-        isGameOver = false;
-        isPaused = false;
-        player.x = canvas.width / 2 - player.width / 2;
-        gameLoop = requestAnimationFrame(updateGame);
-    }
-
+    function resetGame() { document.getElementById('msgOverlay').style.display = 'none'; score = 0; level = 1; items = []; isGameOver = false; isPaused = false; player.x = canvas.width / 2 - player.width / 2; gameLoop = requestAnimationFrame(updateGame); }
     function closeGame() { location.reload(); }
-
-    // --- CHAOS MODE ---
     let chaosAudio = null; 
-    function activateChaos() {
-        document.body.classList.add('chaos'); 
-        document.getElementById('mainCard').classList.add('chaos-spin');
-        document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA";
-        document.querySelector('.forbidden-btn').style.display = 'none';
-        chaosAudio = new Audio('heman.mp3');
-        chaosAudio.loop = true; 
-        chaosAudio.volume = 1.0; 
-        chaosAudio.play().catch(e => console.log("Audio blocked"));
-        setTimeout(() => { alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄"); }, 500);
-    }
+    function activateChaos() { document.body.classList.add('chaos'); document.getElementById('mainCard').classList.add('chaos-spin'); document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA"; document.querySelector('.forbidden-btn').style.display = 'none'; chaosAudio = new Audio('heman.mp3'); chaosAudio.loop = true; chaosAudio.volume = 1.0; chaosAudio.play().catch(e => console.log("Audio blocked")); setTimeout(() => { alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄"); }, 500); }
 </script>
 
 </body>
