@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,6 +12,7 @@
             --accent: #00e676;
             --danger: #ff5252;
             --battle-bg: #2d3436;
+            --map-bg: #4a3f35; /* Dark wood floor color */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -57,30 +58,43 @@
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; transition: filter 0.5s; }
         
         /* EVOLUTION STAGES CSS FILTERS */
-        .stage-1 { filter: none; } /* Shoelace */
-        .stage-2 { filter: hue-rotate(180deg) saturate(1.5); } /* Danger Noodle (Blue) */
-        .stage-3 { filter: invert(1) drop-shadow(0 0 5px #ff0000); } /* Nope Rope (Demonic) */
+        .stage-1 { filter: none; }
+        .stage-2 { filter: hue-rotate(180deg) saturate(1.5); }
+        .stage-3 { filter: invert(1) drop-shadow(0 0 5px #ff0000); }
+
+        /* === MAP SCREEN (NEW) === */
+        .map-screen {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--map-bg);
+            z-index: 90; /* Below battle screen */
+            flex-direction: column; padding: 20px; box-sizing: border-box;
+        }
+        .map-header {
+            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 20px;
+            border: 2px solid #8e7c68;
+        }
+        .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex-grow: 1; align-content: center; }
+        .loc-btn {
+            background: #6d5e4c; border: 3px solid #3e352a; padding: 20px; border-radius: 12px;
+            color: #e0e0e0; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;
+        }
+        .loc-btn span { font-size: 2rem; margin-bottom: 5px; }
+        .loc-btn:active { background: #574b3d; transform: scale(0.98); }
+        .loc-btn.safe { border-color: var(--accent); color: var(--accent); }
+        .loc-btn.boss { border-color: var(--danger); color: var(--danger); background: #4a2c2c; }
 
         /* BATTLE SCREEN OVERLAY */
         .battle-screen {
             display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--battle-bg);
-            z-index: 100;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px;
-            box-sizing: border-box;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--battle-bg); z-index: 100;
+            flex-direction: column; justify-content: space-between; padding: 20px; box-sizing: border-box;
         }
 
         .battle-hud {
-            background: rgba(0,0,0,0.4);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #555;
-            margin-bottom: 10px;
-            text-align: left;
+            background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px;
+            border: 1px solid #555; margin-bottom: 10px; text-align: left;
         }
         .hp-bar-bg { width: 100%; height: 8px; background: #555; border-radius: 4px; overflow: hidden; margin-top: 5px; }
         .hp-bar-fill { height: 100%; background: #00e676; width: 100%; transition: width 0.3s; }
@@ -96,11 +110,8 @@
         @keyframes lunge { 0% {transform: scale(1);} 50% {transform: scale(1.4);} 100% {transform: scale(1);} }
 
         .battle-controls {
-            background: #fff;
-            color: #333;
-            border-radius: 15px 15px 0 0;
-            padding: 20px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            background: #fff; color: #333; border-radius: 15px 15px 0 0;
+            padding: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
         }
         .log { font-family: monospace; font-size: 0.9rem; height: 30px; margin-bottom: 10px; font-weight: bold; color: #d63031; }
         
@@ -117,6 +128,7 @@
         .status { font-size: 1.4rem; margin: 20px 0; padding: 15px; background: #333; border-radius: 10px; font-weight: bold; border: 1px solid #444; }
         .feed-btn { background: var(--accent); color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; }
         .rpg-btn { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; width: 100%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.4); cursor: pointer; }
+        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
         
         /* SETTINGS */
         .settings-toggle { background: none; border: none; color: #666; font-size: 1.5rem; margin-top: 20px; cursor: pointer; opacity: 0.7; }
@@ -128,11 +140,37 @@
         .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
         input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
-        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
+
+<div class="map-screen" id="mapScreen">
+    <div class="map-header">
+        <h2 style="margin:0;">🗺️ The House Map</h2>
+        <p id="mapLog" style="color:#aaa; font-size:0.9rem; margin-top:5px; height:20px;">Where to explore?</p>
+    </div>
+    
+    <div class="battle-hud">
+        <div style="display:flex; justify-content:space-between;">
+            <b id="mapPlayerName">Noodle</b>
+            <span>Lvl <span id="mapPlayerLvl">1</span></span>
+        </div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="mapPlayerHp"></div></div>
+    </div>
+
+    <div class="map-grid">
+        <button class="loc-btn safe" onclick="travelTo('livingroom')"><span>🛋️</span>Living Room<br><small>(Safe & Heal)</small></button>
+        <button class="loc-btn" onclick="travelTo('kitchen')"><span>🥣</span>Kitchen<br><small>(Easy)</small></button>
+        <button class="loc-btn" onclick="travelTo('basement')"><span>📦</span>Basement<br><small>(Medium)</small></button>
+        <button class="loc-btn" onclick="travelTo('garage')"><span>🚗</span>Garage<br><small>(Hard)</small></button>
+        <button class="loc-btn boss" id="bossLocBtn" onclick="travelTo('hallway')" style="grid-column: span 2; opacity: 0.5; pointer-events: none;">
+            <span>🧹</span>The Forbidden Hallway<br><small>(BOSS - Lvl 5+)</small>
+        </button>
+    </div>
+    <button class="secondary" onclick="exitRPG()" style="margin-top:20px;">Exit to Main Menu</button>
+</div>
+
 
 <div class="battle-screen" id="battleScreen">
     <div class="battle-hud">
@@ -145,7 +183,8 @@
 
     <div class="arena">
         <div class="sprite" id="enemySprite">🐰</div>
-        <div style="height: 60px;"></div> <div class="sprite stage-1" id="playerSprite">🐍</div>
+        <div style="height: 60px;"></div>
+        <div class="sprite stage-1" id="playerSprite">🐍</div>
     </div>
 
     <div class="battle-controls">
@@ -159,7 +198,7 @@
 
         <div class="move-grid" id="moveGrid">
             </div>
-        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="nextTurn()">Continue</button>
+        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="returnToMap()">Continue Exploring</button>
     </div>
 </div>
 
@@ -167,7 +206,7 @@
     <span class="emoji" id="mascot">🐍</span>
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
-    <button class="rpg-btn" onclick="startRPG()">⚔️ Pocket Danger Noodle</button>
+    <button class="rpg-btn" onclick="startRPG()">⚔️ Enter the RPG World</button>
 
     <div class="status" id="statusDisplay">Loading...</div>
 
@@ -203,7 +242,6 @@
     if (savedInterval) document.getElementById('interval').value = savedInterval;
     if (savedTime) document.getElementById('feedTime').value = savedTime;
     
-    // Theme Loading
     const initialColor = savedColor || '#C8E6C9';
     if(initialColor === 'holo') { document.body.classList.add('holo-theme'); } 
     else { setTheme(initialColor, false); }
@@ -240,7 +278,6 @@
         document.getElementById('swatchContainer').appendChild(div);
     }
 
-    // --- FEED LOGIC ---
     function confirmFeed() { if(confirm("Confirm feeding?")) feedSnake(); }
     function feedSnake() {
         localStorage.setItem('lastFed', new Date().toISOString());
@@ -252,11 +289,9 @@
         const interval = parseInt(document.getElementById('interval').value) || 21;
         const statusDiv = document.getElementById('statusDisplay');
         if (!lastFed) { statusDiv.innerHTML = "⚠️ No data."; statusDiv.style.color = "var(--danger)"; return; }
-        
         const nextDate = new Date(new Date(lastFed));
         nextDate.setDate(nextDate.getDate() + interval);
         const daysLeft = Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24));
-        
         document.getElementById('lastFedText').innerText = "Last fed: " + new Date(lastFed).toLocaleDateString();
         if (daysLeft <= 0) { statusDiv.innerHTML = "🍽️ FEED NOW!"; statusDiv.style.color = "var(--danger)"; }
         else { statusDiv.innerHTML = `Next feed in <b>${daysLeft} days</b>`; statusDiv.style.color = "var(--accent)"; }
@@ -280,25 +315,23 @@
     }
 
     // --- RPG ENGINE ---
-    
-    // Default Player State
     let player = { lvl: 1, hp: 30, maxHp: 30, xp: 0, nextLvl: 50, stage: 1 };
     let enemy = { name: "", icon: "", hp: 0, maxHp: 0, dmg: 0 };
     
     const MOVES = {
-        1: [ // Shoelace Moves
+        1: [ 
             { name: "Boop", dmg: 4, type: "atk" },
             { name: "Hiss", dmg: 0, type: "debuff", msg: "Enemy dmg down!" },
             { name: "Panic", dmg: 0, type: "heal", val: 10, msg: "Scared! Healed 10 HP." },
             { name: "Nip", dmg: 6, type: "atk" }
         ],
-        2: [ // Danger Noodle Moves
+        2: [ 
             { name: "Strike", dmg: 12, type: "atk" },
             { name: "Coil", dmg: 0, type: "heal", val: 20, msg: "Coiled up. Healed 20 HP." },
             { name: "Tail Whip", dmg: 18, type: "atk", acc: 0.8 },
             { name: "Venom", dmg: 5, type: "dot", msg: "Enemy is poisoned!" }
         ],
-        3: [ // Nope Rope Moves
+        3: [ 
             { name: "Chomp", dmg: 25, type: "atk" },
             { name: "Constrict", dmg: 10, type: "stun", msg: "Enemy stunned!" },
             { name: "Devour", dmg: 20, type: "lifesteal", msg: "Drained HP!" },
@@ -306,15 +339,65 @@
         ]
     };
 
-    // Load Save
     if(localStorage.getItem('rpgSave')) player = JSON.parse(localStorage.getItem('rpgSave'));
 
     function startRPG() {
         document.getElementById('mainCard').style.display = 'none';
-        document.getElementById('battleScreen').style.display = 'flex';
+        document.getElementById('mapScreen').style.display = 'flex';
         checkEvolution();
-        generateEnemy();
-        renderUI();
+        updateMapUI();
+    }
+
+    function exitRPG() {
+        document.getElementById('mapScreen').style.display = 'none';
+        document.getElementById('mainCard').style.display = 'block';
+        saveGame();
+    }
+
+    function updateMapUI() {
+         // Player HUD on Map
+        document.getElementById('mapPlayerName').innerText = ["Shoelace", "Danger Noodle", "Nope Rope"][player.stage - 1];
+        document.getElementById('mapPlayerLvl').innerText = player.lvl;
+        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100);
+        const pBar = document.getElementById('mapPlayerHp');
+        pBar.style.width = pHpPct + "%";
+        pBar.className = pHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
+        
+        // Boss Unlock
+        const bossBtn = document.getElementById('bossLocBtn');
+        if(player.lvl >= 5) {
+            bossBtn.style.opacity = 1;
+            bossBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    function travelTo(location) {
+        const log = document.getElementById('mapLog');
+        let encounterChance = 0.4; // Default 40%
+        let dangerLevel = 1;
+
+        if(location === 'livingroom') {
+            log.innerText = "You rest on the sofa. HP restored a bit.";
+            player.hp = Math.min(player.maxHp, player.hp + Math.floor(player.maxHp * 0.2));
+            updateMapUI();
+            saveGame();
+            return; // Safe zone
+        } else if (location === 'kitchen') {
+            log.innerText = "Slithering through crumbs..."; dangerLevel = 1; encounterChance = 0.5;
+        } else if (location === 'basement') {
+            log.innerText = "It's dark down here..."; dangerLevel = 2; encounterChance = 0.6;
+        } else if (location === 'garage') {
+            log.innerText = "Smells like gasoline and danger."; dangerLevel = 3; encounterChance = 0.7;
+        } else if (location === 'hallway') {
+             log.innerText = "Entering the forbidden zone..."; dangerLevel = 99; encounterChance = 1.0; // Always boss
+        }
+
+        // Roll for encounter
+        if(Math.random() < encounterChance) {
+            setTimeout(() => {
+                generateEnemy(dangerLevel);
+            }, 500);
+        }
     }
 
     function checkEvolution() {
@@ -322,64 +405,48 @@
         if(player.lvl >= 5) newStage = 2;
         if(player.lvl >= 10) newStage = 3;
         
-        // Evolution Trigger
         if (newStage > player.stage) {
             alert(`What? Noodle is evolving into Stage ${newStage}!`);
             player.stage = newStage;
             player.maxHp += 30;
             player.hp = player.maxHp;
-            
-            // Rewards
-            if(newStage === 2) {
-                localStorage.setItem('goldUnlocked', 'true');
-                addGoldSwatch();
-                setTheme('#FFD700');
-                alert("Unlocked GOLD THEME!");
-            }
-            if(newStage === 3) {
-                localStorage.setItem('holoUnlocked', 'true');
-                addHoloSwatch();
-                setHolo();
-                alert("Unlocked HOLOGRAPHIC THEME!");
-            }
+            if(newStage === 2) { localStorage.setItem('goldUnlocked', 'true'); addGoldSwatch(); setTheme('#FFD700'); alert("Unlocked GOLD THEME!"); }
+            if(newStage === 3) { localStorage.setItem('holoUnlocked', 'true'); addHoloSwatch(); setHolo(); alert("Unlocked HOLOGRAPHIC THEME!"); }
         }
-        
-        // Update Mascot CSS
-        const sprite = document.getElementById('playerSprite');
-        sprite.className = `sprite stage-${player.stage}`;
-        
-        // Update Names
-        const titles = ["Shoelace", "Danger Noodle", "Nope Rope"];
-        document.getElementById('playerName').innerText = titles[player.stage - 1];
+        document.getElementById('playerSprite').className = `sprite stage-${player.stage}`;
+        document.getElementById('playerName').innerText = ["Shoelace", "Danger Noodle", "Nope Rope"][player.stage - 1];
     }
 
-    function generateEnemy() {
-        const list = [
-            { n: "Dust Bunny", i: "🐰", hp: 15, atk: 3 },
-            { n: "Feisty Cricket", i: "🦗", hp: 25, atk: 5 },
-            { n: "Spider", i: "🕷️", hp: 40, atk: 8 },
-            { n: "Cat Paw", i: "🐾", hp: 60, atk: 12 },
-            { n: "Ice Mouse", i: "🧊", hp: 100, atk: 15 },
-            { n: "THE VACUUM", i: "🧹", hp: 200, atk: 25 } // Boss
-        ];
+    function generateEnemy(dangerLevel) {
+        document.getElementById('mapScreen').style.display = 'none';
+        document.getElementById('battleScreen').style.display = 'flex';
+
+        if (dangerLevel === 99) {
+             // BOSS
+            enemy = { name: "THE VACUUM", icon: "🧹", lvl: player.lvl + 2, maxHp: 200, hp: 200, atk: 25 };
+        } else {
+            // Random based on danger level
+            const list = [
+                { n: "Dust Bunny", i: "🐰", hp: 15, atk: 3, tier: 1 },
+                { n: "Feisty Cricket", i: "🦗", hp: 25, atk: 5, tier: 1 },
+                { n: "Spider", i: "🕷️", hp: 40, atk: 8, tier: 2 },
+                { n: "Cat Paw", i: "🐾", hp: 60, atk: 12, tier: 3 },
+                { n: "Ice Mouse", i: "🧊", hp: 100, atk: 15, tier: 3 }
+            ];
+            // Filter enemies that match the danger tier
+            let possible = list.filter(e => e.tier === dangerLevel || e.tier === dangerLevel -1);
+            if(possible.length === 0) possible = [list[0]]; // Fallback
+
+            const base = possible[Math.floor(Math.random() * possible.length)];
+            enemy = { ...base, lvl: player.lvl, maxHp: base.hp + (player.lvl*5), hp: base.hp + (player.lvl*5), atk: base.atk + player.lvl };
+        }
         
-        // Pick enemy based on level
-        let tier = Math.floor(player.lvl / 2);
-        if (tier >= list.length) tier = list.length - 1;
-        
-        // 20% chance to fight lower tier, 10% chance to fight boss (if high enough)
-        let idx = tier;
-        if (Math.random() > 0.8 && idx > 0) idx--;
-        
-        const base = list[idx];
-        enemy = { ...base, maxHp: base.hp, hp: base.hp }; // Clone
-        
-        document.getElementById('enemyName').innerText = enemy.n;
-        document.getElementById('enemySprite').innerText = enemy.i;
-        document.getElementById('battleLog').innerText = `A wild ${enemy.n} appeared!`;
+        document.getElementById('enemyName').innerText = enemy.name;
+        document.getElementById('enemyLvl').innerText = enemy.lvl;
+        document.getElementById('enemySprite').innerText = enemy.icon;
+        document.getElementById('battleLog').innerText = `A wild ${enemy.name} appeared!`;
         document.getElementById('battleLog').style.color = "#d63031";
         
-        // Show Moves, Hide Continue
         document.getElementById('moveGrid').style.display = 'grid';
         document.getElementById('continueBtn').style.display = 'none';
         
@@ -389,169 +456,82 @@
 
     function renderMoves() {
         const grid = document.getElementById('moveGrid');
-        grid.innerHTML = ""; // Clear
+        grid.innerHTML = ""; 
         const currentMoves = MOVES[player.stage];
-        
         currentMoves.forEach(m => {
             const btn = document.createElement('button');
-            btn.className = 'move-btn';
-            btn.innerText = m.name;
-            btn.onclick = () => executeMove(m);
+            btn.className = 'move-btn'; btn.innerText = m.name; btn.onclick = () => executeMove(m);
             grid.appendChild(btn);
         });
-        
-        // Add Run Button
         const run = document.createElement('button');
-        run.className = 'move-btn run-btn';
-        run.innerText = "RUN";
-        run.onclick = () => {
-            document.getElementById('battleScreen').style.display = 'none';
-            document.getElementById('mainCard').style.display = 'block';
-            saveGame();
-        };
+        run.className = 'move-btn run-btn'; run.innerText = "RUN";
+        run.onclick = returnToMap;
         grid.appendChild(run);
     }
 
     function executeMove(move) {
-        let msg = "";
-        let dmg = 0;
-        
-        // Accuracy Check
-        if (move.acc && Math.random() > move.acc) {
-            document.getElementById('battleLog').innerText = "Noodle missed!";
-            endPlayerTurn();
-            return;
-        }
+        let msg = ""; let dmg = 0;
+        if (move.acc && Math.random() > move.acc) { document.getElementById('battleLog').innerText = "Noodle missed!"; endPlayerTurn(); return; }
+        document.getElementById('playerSprite').classList.add('lunge'); setTimeout(()=>document.getElementById('playerSprite').classList.remove('lunge'), 300);
 
-        // Animation
-        document.getElementById('playerSprite').classList.add('lunge');
-        setTimeout(()=>document.getElementById('playerSprite').classList.remove('lunge'), 300);
+        if (move.type === 'atk') { dmg = move.dmg + Math.floor(Math.random() * 3) + player.lvl; enemy.hp -= dmg; msg = `Hit for ${dmg} damage!`; } 
+        else if (move.type === 'heal') { player.hp = Math.min(player.maxHp, player.hp + move.val + player.lvl); msg = move.msg; } 
+        else if (move.type === 'debuff') { enemy.atk = Math.max(1, enemy.atk - 2); msg = move.msg; } 
+        else if (move.type === 'stun') { enemy.stunned = true; enemy.hp -= move.dmg; msg = move.msg; } 
+        else if (move.type === 'lifesteal') { enemy.hp -= move.dmg; player.hp = Math.min(player.maxHp, player.hp + (move.dmg/2)); msg = move.msg; } 
+        else if (move.type === 'dot') { enemy.poisoned = 3; enemy.hp -= move.dmg; msg = move.msg; } 
+        else if (move.type === 'ult') { enemy.hp -= move.dmg; msg = "JUDGEMENT!!!"; }
 
-        // Logic
-        if (move.type === 'atk') {
-            dmg = move.dmg + Math.floor(Math.random() * 3);
-            enemy.hp -= dmg;
-            msg = `Hit for ${dmg} damage!`;
-        } else if (move.type === 'heal') {
-            player.hp = Math.min(player.maxHp, player.hp + move.val);
-            msg = move.msg;
-        } else if (move.type === 'debuff') {
-            enemy.atk = Math.max(1, enemy.atk - 2);
-            msg = move.msg;
-        } else if (move.type === 'stun') {
-            enemy.stunned = true;
-            enemy.hp -= move.dmg;
-            msg = move.msg;
-        } else if (move.type === 'lifesteal') {
-            enemy.hp -= move.dmg;
-            player.hp = Math.min(player.maxHp, player.hp + (move.dmg/2));
-            msg = move.msg;
-        } else if (move.type === 'dot') {
-            enemy.poisoned = 3; // 3 turns
-            enemy.hp -= move.dmg;
-            msg = move.msg;
-        } else if (move.type === 'ult') {
-            enemy.hp -= move.dmg;
-            msg = "JUDGEMENT!!!";
-        }
-
-        // Enemy Reaction
-        document.getElementById('enemySprite').classList.add('shake');
-        setTimeout(()=>document.getElementById('enemySprite').classList.remove('shake'), 400);
-
-        document.getElementById('battleLog').innerText = msg;
-        document.getElementById('battleLog').style.color = "#00b894";
+        document.getElementById('enemySprite').classList.add('shake'); setTimeout(()=>document.getElementById('enemySprite').classList.remove('shake'), 400);
+        document.getElementById('battleLog').innerText = msg; document.getElementById('battleLog').style.color = "#00b894";
         renderUI();
 
-        if (enemy.hp <= 0) {
-            victory();
-        } else {
-            // Lock UI
-            document.getElementById('moveGrid').style.pointerEvents = 'none';
-            setTimeout(enemyTurn, 1000);
-        }
+        if (enemy.hp <= 0) { victory(); } else { document.getElementById('moveGrid').style.pointerEvents = 'none'; setTimeout(enemyTurn, 1000); }
     }
 
     function enemyTurn() {
-        if(enemy.stunned) {
-            document.getElementById('battleLog').innerText = `${enemy.n} is stunned!`;
-            enemy.stunned = false;
-        } else {
-            let dmg = enemy.atk + Math.floor(Math.random() * 3);
-            player.hp -= dmg;
-            document.getElementById('battleLog').innerText = `${enemy.n} dealt ${dmg} dmg!`;
-            document.getElementById('battleLog').style.color = "#d63031";
-            
-            // Poison logic
-            if(enemy.poisoned) {
-                enemy.hp -= 5;
-                enemy.poisoned--;
-            }
+        if(enemy.stunned) { document.getElementById('battleLog').innerText = `${enemy.name} is stunned!`; enemy.stunned = false; } 
+        else {
+            let dmg = enemy.atk + Math.floor(Math.random() * 3); player.hp -= dmg;
+            document.getElementById('battleLog').innerText = `${enemy.name} dealt ${dmg} dmg!`; document.getElementById('battleLog').style.color = "#d63031";
+            if(enemy.poisoned) { enemy.hp -= 5; enemy.poisoned--; }
         }
-        
         renderUI();
-        document.getElementById('moveGrid').style.pointerEvents = 'auto'; // Unlock
-
+        document.getElementById('moveGrid').style.pointerEvents = 'auto';
         if (player.hp <= 0) {
             document.getElementById('battleLog').innerText = "Noodle fainted! (XP Lost)";
-            player.xp = 0;
-            player.hp = player.maxHp;
-            saveGame();
-            setTimeout(() => {
-                document.getElementById('battleScreen').style.display = 'none';
-                document.getElementById('mainCard').style.display = 'block';
-            }, 2000);
-        } else if (enemy.hp <= 0) {
-            victory(); // Die from poison
-        }
+            player.xp = 0; player.hp = player.maxHp; saveGame();
+            setTimeout(returnToMap, 2000);
+        } else if (enemy.hp <= 0) { victory(); }
     }
 
     function victory() {
-        const xpGain = 15 + (enemy.atk * 2);
-        player.xp += xpGain;
+        const xpGain = 15 + (enemy.atk * 2); player.xp += xpGain;
         document.getElementById('battleLog').innerText = `Victory! +${xpGain} XP`;
-        
-        // Level Up?
         if (player.xp >= player.nextLvl) {
-            player.lvl++;
-            player.xp -= player.nextLvl;
-            player.nextLvl = Math.floor(player.nextLvl * 1.5);
-            player.maxHp += 10;
-            player.hp = player.maxHp;
-            alert("LEVEL UP!");
-            checkEvolution();
+            player.lvl++; player.xp -= player.nextLvl; player.nextLvl = Math.floor(player.nextLvl * 1.5);
+            player.maxHp += 10; player.hp = player.maxHp; alert("LEVEL UP!"); checkEvolution();
         }
-        
         saveGame();
-        
-        // Show Continue Button
         document.getElementById('moveGrid').style.display = 'none';
-        const cont = document.getElementById('continueBtn');
-        cont.style.display = 'block';
-        cont.onclick = () => {
-            generateEnemy();
-        };
+        document.getElementById('continueBtn').style.display = 'block';
     }
 
     function renderUI() {
-        // Player HP
-        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100);
-        const pBar = document.getElementById('playerHp');
-        pBar.style.width = pHpPct + "%";
-        if(pHpPct < 30) pBar.classList.add('low'); else pBar.classList.remove('low');
         document.getElementById('playerLvl').innerText = player.lvl;
-
-        // Enemy HP
-        const eHpPct = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
-        const eBar = document.getElementById('enemyHp');
-        eBar.style.width = eHpPct + "%";
-        if(eHpPct < 30) eBar.classList.add('low'); else eBar.classList.remove('low');
-        document.getElementById('enemyLvl').innerText = Math.floor(player.lvl); // Enemy scales
+        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100); const pBar = document.getElementById('playerHp');
+        pBar.style.width = pHpPct + "%"; pBar.className = pHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
+        const eHpPct = Math.max(0, (enemy.hp / enemy.maxHp) * 100); const eBar = document.getElementById('enemyHp');
+        eBar.style.width = eHpPct + "%"; eBar.className = eHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
     }
 
-    function saveGame() {
-        localStorage.setItem('rpgSave', JSON.stringify(player));
+    function returnToMap() {
+        document.getElementById('battleScreen').style.display = 'none';
+        document.getElementById('mapScreen').style.display = 'flex';
+        updateMapUI();
+        saveGame();
     }
+    function saveGame() { localStorage.setItem('rpgSave', JSON.stringify(player)); }
 </script>
 </body>
 </html>
