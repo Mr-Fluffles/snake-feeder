@@ -11,6 +11,7 @@
             --text: #e0e0e0;
             --accent: #00e676;
             --danger: #ff5252;
+            --battle-bg: #2d3436;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -29,6 +30,7 @@
             padding-bottom: 50px;
         }
         
+        /* HOLOGRAPHIC THEME */
         body.holo-theme {
             background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
             background-size: 800% 800%;
@@ -46,187 +48,126 @@
             border-radius: 20px;
             width: 75%;
             max-width: 350px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
             z-index: 10;
-            transition: transform 1s, opacity 0.5s;
             margin-top: 20px;
         }
-        h1 { margin-top: 0; font-size: 1.8rem; }
-        .emoji { font-size: 3rem; display: block; margin-bottom: 10px; }
+        h1 { margin-top: 0; font-size: 1.6rem; }
+        .emoji { font-size: 3rem; display: block; margin-bottom: 10px; transition: filter 0.5s; }
         
-        .status {
-            font-size: 1.4rem;
-            margin: 20px 0;
-            padding: 15px;
-            background: #333;
-            border-radius: 10px;
-            font-weight: bold;
-            border: 1px solid #444;
-        }
-        
-        /* Main Action Button */
-        button.feed-btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: transform 0.1s;
-        }
-        button:active { transform: scale(0.95); }
-        
-        .secondary {
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            margin-top: 20px;
-            border-radius: 50px;
-            padding: 10px 20px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
+        /* EVOLUTION STAGES CSS FILTERS */
+        .stage-1 { filter: none; } /* Shoelace */
+        .stage-2 { filter: hue-rotate(180deg) saturate(1.5); } /* Danger Noodle (Blue) */
+        .stage-3 { filter: invert(1) drop-shadow(0 0 5px #ff0000); } /* Nope Rope (Demonic) */
+
+        /* BATTLE SCREEN OVERLAY */
+        .battle-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--battle-bg);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .game-btn {
-            background: #ff9800;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            width: 100%;
-            cursor: pointer;
-        }
-        
-        /* SETTINGS DRAWER */
-        .settings-toggle {
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 1.5rem;
-            margin-top: 20px;
-            cursor: pointer;
-            opacity: 0.7;
-        }
-        .settings-panel {
-            display: none; /* Hidden by default */
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #444;
-            animation: slideDown 0.3s ease-out;
-        }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group { 
-            margin: 15px 0; 
-            font-size: 1rem; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            color: #aaa;
-        }
-        
-        input[type="number"], input[type="time"] {
-            background: #333;
-            border: none;
-            color: white;
+        .battle-hud {
+            background: rgba(0,0,0,0.4);
             padding: 10px;
-            border-radius: 5px;
-            width: 60px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: bold;
+            border-radius: 10px;
+            border: 1px solid #555;
+            margin-bottom: 10px;
+            text-align: left;
         }
+        .hp-bar-bg { width: 100%; height: 8px; background: #555; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .hp-bar-fill { height: 100%; background: #00e676; width: 100%; transition: width 0.3s; }
+        .hp-bar-fill.low { background: #ff5252; }
         
-        .theme-label { margin-top: 20px; font-size: 0.9rem; color: #888; margin-bottom: 10px; display: block; }
-        .pastel-swatches { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.2s; }
+        .arena { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .sprite { font-size: 5rem; transition: transform 0.2s; }
+        
+        /* ANIMATIONS */
+        .shake { animation: shake 0.4s; }
+        .lunge { animation: lunge 0.3s; }
+        @keyframes shake { 0% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} 100% {transform: translateX(0);} }
+        @keyframes lunge { 0% {transform: scale(1);} 50% {transform: scale(1.4);} 100% {transform: scale(1);} }
+
+        .battle-controls {
+            background: #fff;
+            color: #333;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+        .log { font-family: monospace; font-size: 0.9rem; height: 30px; margin-bottom: 10px; font-weight: bold; color: #d63031; }
+        
+        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .move-btn {
+            background: #eee; border: 2px solid #333; padding: 15px;
+            border-radius: 10px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; font-size: 0.9rem;
+        }
+        .move-btn:active { background: #ccc; }
+        .run-btn { background: #fab1a0; border-color: #d63031; color: #d63031; }
+
+        /* MAIN UI BUTTONS */
+        .status { font-size: 1.4rem; margin: 20px 0; padding: 15px; background: #333; border-radius: 10px; font-weight: bold; border: 1px solid #444; }
+        .feed-btn { background: var(--accent); color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .rpg-btn { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; width: 100%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.4); cursor: pointer; }
+        
+        /* SETTINGS */
+        .settings-toggle { background: none; border: none; color: #666; font-size: 1.5rem; margin-top: 20px; cursor: pointer; opacity: 0.7; }
+        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #444; }
+        .input-group { margin: 15px 0; font-size: 1rem; color: #aaa; }
+        input[type="number"], input[type="time"] { background: #333; border: none; color: white; padding: 10px; border-radius: 5px; width: 60px; text-align: center; font-weight: bold; }
+        .theme-label { margin-top: 20px; font-size: 0.9rem; color: #888; display: block; }
+        .pastel-swatches { display: flex; justify-content: center; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
         input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
-        
-        /* TRAP BUTTON */
-        .forbidden-btn {
-            background-color: #220000;
-            color: #ff3333;
-            font-family: "Courier New", monospace;
-            font-size: 0.7rem;
-            padding: 10px;
-            margin-top: 30px;
-            border: 1px solid #ff0000;
-            border-radius: 5px;
-            opacity: 0;
-            animation: reveal 2s forwards, glitch-shake 4s infinite;
-            animation-delay: 3s; 
-            cursor: help;
-            box-shadow: 0 0 5px #ff0000;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative; 
-            z-index: 100;
-            width: 100%;
-        }
-        
-        /* ANIMATIONS & GAME CANVAS (Same as before) */
-        @keyframes reveal { from { opacity: 0; } to { opacity: 0.8; } }
-        @keyframes glitch-shake {
-            0% { transform: translate(0, 0); } 90% { transform: translate(0, 0); }
-            92% { transform: translate(-2px, 2px); } 94% { transform: translate(2px, -2px); }
-            96% { transform: translate(-2px, -2px); } 98% { transform: translate(2px, 2px); }
-            100% { transform: translate(0, 0); }
-        }
-        body.chaos {
-            background-image: url('https://media.giphy.com/media/M7gtacN7aPNsc/giphy.gif');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            animation: rainbow-flash 0.2s infinite;
-        }
-        .container.chaos-spin { animation: spin 3s infinite linear; border: 5px solid hotpink; }
-        @keyframes rainbow-flash { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        canvas { display: none; position: fixed; top: 0; left: 0; z-index: 50; background: rgba(0,0,0,0.85); touch-action: none; }
-        body.game-active { overflow: hidden; }
-        .game-overlay { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; color: #000; padding: 20px; border-radius: 15px; z-index: 60; text-align: center; width: 80%; max-width: 300px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .coupon { border: 3px dashed #333; background: #fffbe6; padding: 15px; margin-top: 10px; font-family: "Courier New", monospace; color: #333; transform: rotate(-2deg); }
-        .control-hint { position: fixed; bottom: 20px; width: 100%; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.8rem; z-index: 55; display: none; pointer-events: none; }
+        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
 
-<canvas id="gameCanvas"></canvas>
-<div class="control-hint" id="gameHint">Tap LEFT or RIGHT to move</div>
-
-<div class="game-overlay" id="msgOverlay">
-    <h2 id="msgTitle">Game Over</h2>
-    <p id="msgBody">You ate the fruitcake.</p>
-    <div id="couponBox" class="coupon" style="display:none;">
-        <h3>🎟️ OFFICIAL COUPON 🎟️</h3>
-        <p><b>Luthy</b> owes me one free trip to the pet store to buy frozen mice.</p>
-        <small>Valid forever.</small>
+<div class="battle-screen" id="battleScreen">
+    <div class="battle-hud">
+        <div style="display:flex; justify-content:space-between;">
+            <b id="enemyName">Dust Bunny</b>
+            <span>Lvl <span id="enemyLvl">1</span></span>
+        </div>
+        <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHp"></div></div>
     </div>
-    <button onclick="resetGame()" id="retryBtn" style="margin-top:15px;">Try Again</button>
-    <button onclick="closeGame()" id="closeBtn" class="secondary" style="margin-top:10px; display:none;">Main Menu</button>
+
+    <div class="arena">
+        <div class="sprite" id="enemySprite">🐰</div>
+        <div style="height: 60px;"></div> <div class="sprite stage-1" id="playerSprite">🐍</div>
+    </div>
+
+    <div class="battle-controls">
+        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+            <b id="playerName">Shoelace</b>
+            <span>Lvl <span id="playerLvl">1</span></span>
+        </div>
+        <div class="hp-bar-bg" style="margin-bottom:10px;"><div class="hp-bar-fill" id="playerHp"></div></div>
+        
+        <div class="log" id="battleLog">A wild enemy appeared!</div>
+
+        <div class="move-grid" id="moveGrid">
+            </div>
+        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="nextTurn()">Continue</button>
+    </div>
 </div>
 
 <div class="container" id="mainCard">
-    <span class="emoji">🐍</span>
+    <span class="emoji" id="mascot">🐍</span>
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
-    <button class="game-btn" onclick="initGame()">🦃 Catch The Dinner</button>
+    <button class="rpg-btn" onclick="startRPG()">⚔️ Pocket Danger Noodle</button>
 
     <div class="status" id="statusDisplay">Loading...</div>
 
@@ -236,274 +177,381 @@
     <button class="settings-toggle" onclick="toggleSettings()">⚙️ Settings</button>
 
     <div class="settings-panel" id="settingsPanel">
-        <div class="input-group">
-            Feed every <input type="number" id="interval" value="21" onchange="saveSettings()"> days
-        </div>
-        <div class="input-group">
-            At <input type="time" id="feedTime" value="09:00" onchange="saveSettings()">
-        </div>
-        
+        <div class="input-group">Feed every <input type="number" id="interval" value="21" onchange="saveSettings()"> days</div>
+        <div class="input-group">At <input type="time" id="feedTime" value="09:00" onchange="saveSettings()"></div>
         <button class="secondary" onclick="addToCalendar()">📅 Update Calendar</button>
 
-        <span class="theme-label">Choose a Vibe:</span>
+        <span class="theme-label">Theme:</span>
         <div class="pastel-swatches" id="swatchContainer">
             <div class="swatch" style="background: #C8E6C9;" onclick="setTheme('#C8E6C9')"></div>
             <div class="swatch" style="background: #E1BEE7;" onclick="setTheme('#E1BEE7')"></div>
             <div class="swatch" style="background: #B3E5FC;" onclick="setTheme('#B3E5FC')"></div>
             <div class="swatch" style="background: #FFCCBC;" onclick="setTheme('#FFCCBC')"></div>
-            <div class="swatch" style="background: #F8BBD0;" onclick="setTheme('#F8BBD0')"></div>
         </div>
-        <div class="manual-picker-wrapper">
-            custom: <input type="color" id="bgPicker" value="#C8E6C9">
-        </div>
-
-        <button class="forbidden-btn" onclick="activateChaos()">⚠️ Admin Debug Mode<br>(Do Not Touch)</button>
+        <div class="manual-picker-wrapper">custom: <input type="color" id="bgPicker" value="#C8E6C9"></div>
     </div>
 </div>
 
 <script>
-    // --- APP STATE ---
+    // --- APP LOGIC ---
     const savedInterval = localStorage.getItem('interval');
     const savedColor = localStorage.getItem('themeColor');
     const savedTime = localStorage.getItem('feedTime');
     const goldUnlocked = localStorage.getItem('goldUnlocked');
     const holoUnlocked = localStorage.getItem('holoUnlocked');
 
-    // --- INIT ---
     if (savedInterval) document.getElementById('interval').value = savedInterval;
     if (savedTime) document.getElementById('feedTime').value = savedTime;
     
+    // Theme Loading
     const initialColor = savedColor || '#C8E6C9';
-    if(initialColor === 'holo') {
-        document.body.classList.add('holo-theme');
-    } else {
-        setTheme(initialColor, false);
-    }
+    if(initialColor === 'holo') { document.body.classList.add('holo-theme'); } 
+    else { setTheme(initialColor, false); }
     
     updateDisplay();
     
     if(goldUnlocked === 'true') addGoldSwatch();
     if(holoUnlocked === 'true') addHoloSwatch();
 
-    // --- SETTINGS LOGIC ---
-    function toggleSettings() {
-        const panel = document.getElementById('settingsPanel');
-        if (panel.style.display === 'block') {
-            panel.style.display = 'none';
-        } else {
-            panel.style.display = 'block';
-        }
+    function setTheme(color, save = true) {
+        document.body.classList.remove('holo-theme');
+        document.documentElement.style.setProperty('--bg', color);
+        document.getElementById('bgPicker').value = color;
+        if (save) localStorage.setItem('themeColor', color);
+    }
+    function setHolo(save = true) {
+        document.body.classList.add('holo-theme');
+        if(save) localStorage.setItem('themeColor', 'holo');
+    }
+    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
+
+    function addGoldSwatch() {
+        if(document.getElementById('goldSwatch')) return;
+        const div = document.createElement('div'); div.id='goldSwatch'; div.className='swatch';
+        div.style.background = 'linear-gradient(135deg, #FFD700, #FDB931)';
+        div.onclick = function(){ setTheme('#FFD700'); };
+        document.getElementById('swatchContainer').appendChild(div);
+    }
+    function addHoloSwatch() {
+        if(document.getElementById('holoSwatch')) return;
+        const div = document.createElement('div'); div.id='holoSwatch'; div.className='swatch';
+        div.style.background = 'linear-gradient(135deg, #fbc2eb, #a6c1ee)';
+        div.onclick = function(){ setHolo(); };
+        document.getElementById('swatchContainer').appendChild(div);
     }
 
+    // --- FEED LOGIC ---
+    function confirmFeed() { if(confirm("Confirm feeding?")) feedSnake(); }
+    function feedSnake() {
+        localStorage.setItem('lastFed', new Date().toISOString());
+        localStorage.setItem('interval', document.getElementById('interval').value);
+        updateDisplay();
+    }
+    function updateDisplay() {
+        const lastFed = localStorage.getItem('lastFed');
+        const interval = parseInt(document.getElementById('interval').value) || 21;
+        const statusDiv = document.getElementById('statusDisplay');
+        if (!lastFed) { statusDiv.innerHTML = "⚠️ No data."; statusDiv.style.color = "var(--danger)"; return; }
+        
+        const nextDate = new Date(new Date(lastFed));
+        nextDate.setDate(nextDate.getDate() + interval);
+        const daysLeft = Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24));
+        
+        document.getElementById('lastFedText').innerText = "Last fed: " + new Date(lastFed).toLocaleDateString();
+        if (daysLeft <= 0) { statusDiv.innerHTML = "🍽️ FEED NOW!"; statusDiv.style.color = "var(--danger)"; }
+        else { statusDiv.innerHTML = `Next feed in <b>${daysLeft} days</b>`; statusDiv.style.color = "var(--accent)"; }
+    }
+    function addToCalendar() {
+        const interval = parseInt(document.getElementById('interval').value) || 21;
+        const nextDate = new Date(); nextDate.setDate(nextDate.getDate() + interval);
+        const dateStr = nextDate.toISOString().replace(/[-:]/g, '').split('.')[0];
+        const icsMsg = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${dateStr}\nSUMMARY:🐍 Feed Snake\nRRULE:FREQ=DAILY;INTERVAL=${interval}\nEND:VEVENT\nEND:VCALENDAR`;
+        const blob = new Blob([icsMsg], { type: 'text/calendar' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'snake.ics'; a.click();
+    }
+    function toggleSettings() {
+        const p = document.getElementById('settingsPanel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
     function saveSettings() {
         localStorage.setItem('interval', document.getElementById('interval').value);
         localStorage.setItem('feedTime', document.getElementById('feedTime').value);
         updateDisplay();
     }
 
-    // --- THEME LOGIC ---
-    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
+    // --- RPG ENGINE ---
+    
+    // Default Player State
+    let player = { lvl: 1, hp: 30, maxHp: 30, xp: 0, nextLvl: 50, stage: 1 };
+    let enemy = { name: "", icon: "", hp: 0, maxHp: 0, dmg: 0 };
+    
+    const MOVES = {
+        1: [ // Shoelace Moves
+            { name: "Boop", dmg: 4, type: "atk" },
+            { name: "Hiss", dmg: 0, type: "debuff", msg: "Enemy dmg down!" },
+            { name: "Panic", dmg: 0, type: "heal", val: 10, msg: "Scared! Healed 10 HP." },
+            { name: "Nip", dmg: 6, type: "atk" }
+        ],
+        2: [ // Danger Noodle Moves
+            { name: "Strike", dmg: 12, type: "atk" },
+            { name: "Coil", dmg: 0, type: "heal", val: 20, msg: "Coiled up. Healed 20 HP." },
+            { name: "Tail Whip", dmg: 18, type: "atk", acc: 0.8 },
+            { name: "Venom", dmg: 5, type: "dot", msg: "Enemy is poisoned!" }
+        ],
+        3: [ // Nope Rope Moves
+            { name: "Chomp", dmg: 25, type: "atk" },
+            { name: "Constrict", dmg: 10, type: "stun", msg: "Enemy stunned!" },
+            { name: "Devour", dmg: 20, type: "lifesteal", msg: "Drained HP!" },
+            { name: "Judgement", dmg: 99, type: "ult", acc: 0.5, msg: "JUDGEMENT!" }
+        ]
+    };
 
-    function setTheme(color, save = true) {
-        document.body.classList.remove('holo-theme'); 
-        document.documentElement.style.setProperty('--bg', color);
-        document.getElementById('bgPicker').value = color;
-        if (save) localStorage.setItem('themeColor', color);
+    // Load Save
+    if(localStorage.getItem('rpgSave')) player = JSON.parse(localStorage.getItem('rpgSave'));
+
+    function startRPG() {
+        document.getElementById('mainCard').style.display = 'none';
+        document.getElementById('battleScreen').style.display = 'flex';
+        checkEvolution();
+        generateEnemy();
+        renderUI();
     }
 
-    function setHolo(save = true) {
-        document.body.classList.add('holo-theme');
-        if(save) localStorage.setItem('themeColor', 'holo');
-    }
-
-    function addGoldSwatch() {
-        if(document.getElementById('goldSwatch')) return;
-        const swatchContainer = document.getElementById('swatchContainer');
-        const goldBtn = document.createElement('div');
-        goldBtn.id = 'goldSwatch';
-        goldBtn.className = 'swatch';
-        goldBtn.style.background = 'linear-gradient(135deg, #FFD700, #FDB931)';
-        goldBtn.style.border = '2px solid #fff';
-        goldBtn.onclick = function() { setTheme('#FFD700'); };
-        swatchContainer.appendChild(goldBtn);
-    }
-
-    function addHoloSwatch() {
-        if(document.getElementById('holoSwatch')) return;
-        const swatchContainer = document.getElementById('swatchContainer');
-        const holoBtn = document.createElement('div');
-        holoBtn.id = 'holoSwatch';
-        holoBtn.className = 'swatch';
-        holoBtn.style.background = 'linear-gradient(135deg, #fbc2eb, #a6c1ee)';
-        holoBtn.style.border = '2px solid #fff';
-        holoBtn.title = "Holographic";
-        holoBtn.onclick = function() { setHolo(); };
-        swatchContainer.appendChild(holoBtn);
-    }
-
-    // --- STANDARD APP FUNCTIONS ---
-    function confirmFeed() {
-        if(confirm("Are you sure you fed the snek? This will reset the timer.")) {
-            feedSnake();
+    function checkEvolution() {
+        let newStage = 1;
+        if(player.lvl >= 5) newStage = 2;
+        if(player.lvl >= 10) newStage = 3;
+        
+        // Evolution Trigger
+        if (newStage > player.stage) {
+            alert(`What? Noodle is evolving into Stage ${newStage}!`);
+            player.stage = newStage;
+            player.maxHp += 30;
+            player.hp = player.maxHp;
+            
+            // Rewards
+            if(newStage === 2) {
+                localStorage.setItem('goldUnlocked', 'true');
+                addGoldSwatch();
+                setTheme('#FFD700');
+                alert("Unlocked GOLD THEME!");
+            }
+            if(newStage === 3) {
+                localStorage.setItem('holoUnlocked', 'true');
+                addHoloSwatch();
+                setHolo();
+                alert("Unlocked HOLOGRAPHIC THEME!");
+            }
         }
+        
+        // Update Mascot CSS
+        const sprite = document.getElementById('playerSprite');
+        sprite.className = `sprite stage-${player.stage}`;
+        
+        // Update Names
+        const titles = ["Shoelace", "Danger Noodle", "Nope Rope"];
+        document.getElementById('playerName').innerText = titles[player.stage - 1];
     }
 
-    function feedSnake() {
-        const now = new Date();
-        localStorage.setItem('lastFed', now.toISOString());
-        localStorage.setItem('interval', document.getElementById('interval').value);
-        localStorage.setItem('feedTime', document.getElementById('feedTime').value);
-        updateDisplay();
+    function generateEnemy() {
+        const list = [
+            { n: "Dust Bunny", i: "🐰", hp: 15, atk: 3 },
+            { n: "Feisty Cricket", i: "🦗", hp: 25, atk: 5 },
+            { n: "Spider", i: "🕷️", hp: 40, atk: 8 },
+            { n: "Cat Paw", i: "🐾", hp: 60, atk: 12 },
+            { n: "Ice Mouse", i: "🧊", hp: 100, atk: 15 },
+            { n: "THE VACUUM", i: "🧹", hp: 200, atk: 25 } // Boss
+        ];
+        
+        // Pick enemy based on level
+        let tier = Math.floor(player.lvl / 2);
+        if (tier >= list.length) tier = list.length - 1;
+        
+        // 20% chance to fight lower tier, 10% chance to fight boss (if high enough)
+        let idx = tier;
+        if (Math.random() > 0.8 && idx > 0) idx--;
+        
+        const base = list[idx];
+        enemy = { ...base, maxHp: base.hp, hp: base.hp }; // Clone
+        
+        document.getElementById('enemyName').innerText = enemy.n;
+        document.getElementById('enemySprite').innerText = enemy.i;
+        document.getElementById('battleLog').innerText = `A wild ${enemy.n} appeared!`;
+        document.getElementById('battleLog').style.color = "#d63031";
+        
+        // Show Moves, Hide Continue
+        document.getElementById('moveGrid').style.display = 'grid';
+        document.getElementById('continueBtn').style.display = 'none';
+        
+        renderMoves();
+        renderUI();
     }
 
-    function updateDisplay() {
-        const lastFed = localStorage.getItem('lastFed');
-        const interval = parseInt(document.getElementById('interval').value) || 21;
-        const statusDiv = document.getElementById('statusDisplay');
-        const lastFedText = document.getElementById('lastFedText');
+    function renderMoves() {
+        const grid = document.getElementById('moveGrid');
+        grid.innerHTML = ""; // Clear
+        const currentMoves = MOVES[player.stage];
+        
+        currentMoves.forEach(m => {
+            const btn = document.createElement('button');
+            btn.className = 'move-btn';
+            btn.innerText = m.name;
+            btn.onclick = () => executeMove(m);
+            grid.appendChild(btn);
+        });
+        
+        // Add Run Button
+        const run = document.createElement('button');
+        run.className = 'move-btn run-btn';
+        run.innerText = "RUN";
+        run.onclick = () => {
+            document.getElementById('battleScreen').style.display = 'none';
+            document.getElementById('mainCard').style.display = 'block';
+            saveGame();
+        };
+        grid.appendChild(run);
+    }
 
-        if (!lastFed) {
-            statusDiv.innerHTML = "⚠️ No data. Feed the noodle!";
-            statusDiv.style.color = "var(--danger)";
+    function executeMove(move) {
+        let msg = "";
+        let dmg = 0;
+        
+        // Accuracy Check
+        if (move.acc && Math.random() > move.acc) {
+            document.getElementById('battleLog').innerText = "Noodle missed!";
+            endPlayerTurn();
             return;
         }
-        const lastDate = new Date(lastFed);
-        const nextDate = new Date(lastDate);
-        nextDate.setDate(lastDate.getDate() + interval);
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const tempNext = new Date(nextDate);
-        tempNext.setHours(0,0,0,0);
-        const diffTime = tempNext - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        lastFedText.innerText = "Last fed: " + lastDate.toLocaleDateString();
-        if (diffDays <= 0) {
-            statusDiv.innerHTML = "🍽️ FEED ME NOW!";
-            statusDiv.style.color = "var(--danger)";
+
+        // Animation
+        document.getElementById('playerSprite').classList.add('lunge');
+        setTimeout(()=>document.getElementById('playerSprite').classList.remove('lunge'), 300);
+
+        // Logic
+        if (move.type === 'atk') {
+            dmg = move.dmg + Math.floor(Math.random() * 3);
+            enemy.hp -= dmg;
+            msg = `Hit for ${dmg} damage!`;
+        } else if (move.type === 'heal') {
+            player.hp = Math.min(player.maxHp, player.hp + move.val);
+            msg = move.msg;
+        } else if (move.type === 'debuff') {
+            enemy.atk = Math.max(1, enemy.atk - 2);
+            msg = move.msg;
+        } else if (move.type === 'stun') {
+            enemy.stunned = true;
+            enemy.hp -= move.dmg;
+            msg = move.msg;
+        } else if (move.type === 'lifesteal') {
+            enemy.hp -= move.dmg;
+            player.hp = Math.min(player.maxHp, player.hp + (move.dmg/2));
+            msg = move.msg;
+        } else if (move.type === 'dot') {
+            enemy.poisoned = 3; // 3 turns
+            enemy.hp -= move.dmg;
+            msg = move.msg;
+        } else if (move.type === 'ult') {
+            enemy.hp -= move.dmg;
+            msg = "JUDGEMENT!!!";
+        }
+
+        // Enemy Reaction
+        document.getElementById('enemySprite').classList.add('shake');
+        setTimeout(()=>document.getElementById('enemySprite').classList.remove('shake'), 400);
+
+        document.getElementById('battleLog').innerText = msg;
+        document.getElementById('battleLog').style.color = "#00b894";
+        renderUI();
+
+        if (enemy.hp <= 0) {
+            victory();
         } else {
-            statusDiv.innerHTML = `Next feed in <b>${diffDays} days</b>`;
-            statusDiv.style.color = "var(--accent)";
+            // Lock UI
+            document.getElementById('moveGrid').style.pointerEvents = 'none';
+            setTimeout(enemyTurn, 1000);
         }
     }
 
-    function addToCalendar() {
-        const interval = parseInt(document.getElementById('interval').value) || 21;
-        const timeVal = document.getElementById('feedTime').value || "09:00";
-        const lastFed = localStorage.getItem('lastFed') ? new Date(localStorage.getItem('lastFed')) : new Date();
-        const nextFeed = new Date(lastFed);
-        nextFeed.setDate(nextFeed.getDate() + interval);
-        const year = nextFeed.getFullYear();
-        const month = (nextFeed.getMonth() + 1).toString().padStart(2, '0');
-        const day = nextFeed.getDate().toString().padStart(2, '0');
-        const timeParts = timeVal.split(':');
-        const fullDateTime = `${year}${month}${day}T${timeParts[0]}${timeParts[1]}00`;
-
-        const icsMsg = `BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART:${fullDateTime}
-RRULE:FREQ=DAILY;INTERVAL=${interval}
-SUMMARY:🐍 Feed the Danger Noodle
-DESCRIPTION:Repeats every ${interval} days.
-BEGIN:VALARM
-TRIGGER:-PT0M
-ACTION:DISPLAY
-DESCRIPTION:Feeding Time!
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-
-        const blob = new Blob([icsMsg], { type: 'text/calendar' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'snek-schedule.ics';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-    }
-
-    // --- GAME LOGIC (Unchanged but ensuring scrolling lock works) ---
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    let gameLoop;
-    let score = 0;
-    let isGameOver = false;
-    let isPaused = false;
-    let level = 1;
-    let player = { x: 0, y: 0, width: 60, height: 60, icon: '🐍' };
-    let items = [];
-    let frameCount = 0;
-
-    function initGame() {
-        document.getElementById('mainCard').style.display = 'none';
-        document.body.classList.add('game-active');
-        canvas.style.display = 'block';
-        document.getElementById('gameHint').style.display = 'block';
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        player.x = canvas.width / 2 - player.width / 2;
-        player.y = canvas.height - 100;
-        score = 0; level = 1; items = []; isGameOver = false; isPaused = false;
-        window.addEventListener('touchstart', handleTouch);
-        window.addEventListener('mousedown', handleMouse);
-        gameLoop = requestAnimationFrame(updateGame);
-    }
-    function handleTouch(e) { movePlayer(e.touches[0].clientX); }
-    function handleMouse(e) { movePlayer(e.clientX); }
-    function movePlayer(inputX) {
-        if(inputX < canvas.width / 2) player.x -= 40;
-        else player.x += 40;
-        if(player.x < 0) player.x = 0;
-        if(player.x > canvas.width - player.width) player.x = canvas.width - player.width;
-    }
-
-    function updateGame() {
-        if (isGameOver || isPaused) return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white"; ctx.font = "30px Arial"; ctx.fillText("Score: " + score, 20, 50);
-        let color = "#00e676"; if(level === 2) color = "#FFD700"; if(level === 3) color = "#ff9a9e";
-        ctx.fillStyle = color; ctx.font = "20px Arial"; ctx.fillText("Level " + level, 20, 80);
-        ctx.font = "50px Arial"; ctx.fillText(player.icon, player.x, player.y + 50);
-        frameCount++;
-        let currentSpawnRate = 50; let speedMult = 1; let badThreshold = 0.2; 
-        if (level === 2) { currentSpawnRate = 40; speedMult = 1.5; badThreshold = 0.35; }
-        if (level === 3) { currentSpawnRate = 25; speedMult = 2.0; badThreshold = 0.5; }
-        if(frameCount % currentSpawnRate === 0) {
-            let type = 'good'; let icon = '🦃';
-            if (Math.random() < badThreshold) { type = 'bad'; icon = '🍞'; } else { const foods = ['🦃', '🥧', '🐀']; icon = foods[Math.floor(Math.random() * foods.length)]; }
-            let speed = (Math.random() * 3 + 3) * speedMult;
-            items.push({ x: Math.random() * (canvas.width - 50), y: -50, speed: speed, icon: icon, type: type });
-        }
-        for (let i = 0; i < items.length; i++) {
-            let item = items[i]; item.y += item.speed; ctx.fillText(item.icon, item.x, item.y + 50);
-            if (item.x < player.x + player.width && item.x + 50 > player.x && item.y < player.y + player.height && item.y + 50 > player.y) {
-                if(item.type === 'bad') { endGame("You ate the fruitcake! 🤢"); } else { score++; items.splice(i, 1); i--; checkLevelUp(); }
+    function enemyTurn() {
+        if(enemy.stunned) {
+            document.getElementById('battleLog').innerText = `${enemy.n} is stunned!`;
+            enemy.stunned = false;
+        } else {
+            let dmg = enemy.atk + Math.floor(Math.random() * 3);
+            player.hp -= dmg;
+            document.getElementById('battleLog').innerText = `${enemy.n} dealt ${dmg} dmg!`;
+            document.getElementById('battleLog').style.color = "#d63031";
+            
+            // Poison logic
+            if(enemy.poisoned) {
+                enemy.hp -= 5;
+                enemy.poisoned--;
             }
-            if (item.y > canvas.height) { items.splice(i, 1); i--; }
         }
-        gameLoop = requestAnimationFrame(updateGame);
-    }
-    function checkLevelUp() {
-        if (score === 25 && level === 1) { isPaused = true; level = 2; localStorage.setItem('goldUnlocked', 'true'); addGoldSwatch(); setTheme('#FFD700'); showModal("✨ GOLD UNLOCKED! ✨", "New Theme Acquired!<br>Next Reward at 50!", false, true); }
-        if (score === 50 && level === 2) { isPaused = true; level = 3; localStorage.setItem('holoUnlocked', 'true'); addHoloSwatch(); setHolo(); showModal("💎 HOLO THEME UNLOCKED! 💎", "You are halfway to the Grand Prize!<br>WARNING: LEVEL 3 IS HARD.", false, true); }
-        if (score === 75) { isGameOver = true; showModal("🎉 YOU WON! 🎉", "You survived the apocalypse.", true, false); }
-    }
-    function endGame(reason) { isGameOver = true; showModal("Game Over", reason + "<br>Score: " + score, false, false); }
-    function showModal(title, body, isWin, isCheckpoint) {
-        const overlay = document.getElementById('msgOverlay'); const coupon = document.getElementById('couponBox'); const retryBtn = document.getElementById('retryBtn'); const closeBtn = document.getElementById('closeBtn');
-        document.getElementById('msgTitle').innerText = title; document.getElementById('msgBody').innerHTML = body; overlay.style.display = 'block'; coupon.style.display = 'none'; closeBtn.style.display = 'none';
-        if(isWin) { coupon.style.display = 'block'; retryBtn.style.display = 'none'; closeBtn.style.display = 'inline-block'; } 
-        else if (isCheckpoint) { retryBtn.innerText = "Continue Level " + level; retryBtn.onclick = function() { overlay.style.display = 'none'; isPaused = false; requestAnimationFrame(updateGame); retryBtn.innerText = "Try Again"; retryBtn.onclick = resetGame; }; } 
-        else { retryBtn.innerText = "Try Again"; retryBtn.onclick = resetGame; closeBtn.style.display = 'inline-block'; }
-    }
-    function resetGame() { document.getElementById('msgOverlay').style.display = 'none'; score = 0; level = 1; items = []; isGameOver = false; isPaused = false; player.x = canvas.width / 2 - player.width / 2; gameLoop = requestAnimationFrame(updateGame); }
-    function closeGame() { location.reload(); }
-    let chaosAudio = null; 
-    function activateChaos() { document.body.classList.add('chaos'); document.getElementById('mainCard').classList.add('chaos-spin'); document.getElementById('titleText').innerText = "HEYYEYAAEYAAAEYAEYAA"; document.querySelector('.forbidden-btn').style.display = 'none'; chaosAudio = new Audio('heman.mp3'); chaosAudio.loop = true; chaosAudio.volume = 1.0; chaosAudio.play().catch(e => console.log("Audio blocked")); setTimeout(() => { alert("🦄 YOU TOUCHED THE FORBIDDEN BUTTON! 🦄"); }, 500); }
-</script>
+        
+        renderUI();
+        document.getElementById('moveGrid').style.pointerEvents = 'auto'; // Unlock
 
+        if (player.hp <= 0) {
+            document.getElementById('battleLog').innerText = "Noodle fainted! (XP Lost)";
+            player.xp = 0;
+            player.hp = player.maxHp;
+            saveGame();
+            setTimeout(() => {
+                document.getElementById('battleScreen').style.display = 'none';
+                document.getElementById('mainCard').style.display = 'block';
+            }, 2000);
+        } else if (enemy.hp <= 0) {
+            victory(); // Die from poison
+        }
+    }
+
+    function victory() {
+        const xpGain = 15 + (enemy.atk * 2);
+        player.xp += xpGain;
+        document.getElementById('battleLog').innerText = `Victory! +${xpGain} XP`;
+        
+        // Level Up?
+        if (player.xp >= player.nextLvl) {
+            player.lvl++;
+            player.xp -= player.nextLvl;
+            player.nextLvl = Math.floor(player.nextLvl * 1.5);
+            player.maxHp += 10;
+            player.hp = player.maxHp;
+            alert("LEVEL UP!");
+            checkEvolution();
+        }
+        
+        saveGame();
+        
+        // Show Continue Button
+        document.getElementById('moveGrid').style.display = 'none';
+        const cont = document.getElementById('continueBtn');
+        cont.style.display = 'block';
+        cont.onclick = () => {
+            generateEnemy();
+        };
+    }
+
+    function renderUI() {
+        // Player HP
+        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100);
+        const pBar = document.getElementById('playerHp');
+        pBar.style.width = pHpPct + "%";
+        if(pHpPct < 30) pBar.classList.add('low'); else pBar.classList.remove('low');
+        document.getElementById('playerLvl').innerText = player.lvl;
+
+        // Enemy HP
+        const eHpPct = Math.max(0, (enemy.hp / enemy.maxHp) * 100);
+        const eBar = document.getElementById('enemyHp');
+        eBar.style.width = eHpPct + "%";
+        if(eHpPct < 30) eBar.classList.add('low'); else eBar.classList.remove('low');
+        document.getElementById('enemyLvl').innerText = Math.floor(player.lvl); // Enemy scales
+    }
+
+    function saveGame() {
+        localStorage.setItem('rpgSave', JSON.stringify(player));
+    }
+</script>
 </body>
 </html>
