@@ -30,7 +30,7 @@
             touch-action: manipulation; 
             padding-bottom: 50px;
         }
-        
+
         /* HOLOGRAPHIC THEME */
         body.holo-theme {
             background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
@@ -38,10 +38,25 @@
             animation: holoGradient 10s ease infinite;
         }
         @keyframes holoGradient {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
+            0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
         }
+
+        /* WINTER THEME (The New Unlock) */
+        body.winter-theme {
+            background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+            --card: rgba(255, 255, 255, 0.9);
+            --text: #2c3e50;
+            --accent: #00bcd4;
+        }
+        
+        /* SNOW ANIMATION */
+        .snowflake {
+            position: fixed; top: -10px; z-index: 9999;
+            color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.3);
+            user-select: none; pointer-events: none;
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(110vh); } }
 
         .container {
             background: var(--card);
@@ -53,170 +68,172 @@
             position: relative;
             z-index: 10;
             margin-top: 20px;
+            transition: background 0.5s, color 0.5s;
         }
         h1 { margin-top: 0; font-size: 1.6rem; }
         .emoji { font-size: 3rem; display: block; margin-bottom: 10px; transition: filter 0.5s; }
         
-        /* EVOLUTION STAGES */
+        /* GIFT BOX OVERLAY */
+        .gift-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 200;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .gift-box {
+            font-size: 8rem; cursor: pointer; transition: transform 0.1s; user-select: none;
+        }
+        .gift-box:active { transform: scale(0.9); }
+        .gift-text { color: white; font-weight: bold; margin-top: 20px; font-size: 1.5rem; }
+        .gift-progress { color: #00e676; margin-top: 10px; font-family: monospace; }
+        
+        .gift-card-reveal {
+            background: white; padding: 25px; border-radius: 15px; width: 85%; max-width: 400px;
+            text-align: center; display: none; box-shadow: 0 0 50px #fff;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #333;
+        }
+        .fine-print {
+            font-size: 0.6rem; color: #777; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; line-height: 1.2;
+        }
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        /* RPG & MAP STYLES */
         .stage-1 { filter: none; }
         .stage-2 { filter: hue-rotate(180deg) saturate(1.5); }
         .stage-3 { filter: invert(1) drop-shadow(0 0 5px #ff0000); }
-
-        /* MAP SCREEN */
-        .map-screen {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--map-bg);
-            z-index: 90;
-            flex-direction: column; padding: 20px; box-sizing: border-box;
+        .map-screen, .battle-screen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 90; flex-direction: column; padding: 20px; box-sizing: border-box;
         }
-        .map-header {
-            background: rgba(0,0,0,0.5); padding: 15px; border-radius: 15px; margin-bottom: 20px;
-            border: 2px solid #8e7c68;
+        .map-screen { background: var(--map-bg); }
+        .battle-screen { background: var(--battle-bg); z-index: 100; }
+        .map-header, .battle-hud, .battle-controls {
+            background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px;
+            margin-bottom: 10px; text-align: left; color: #333;
         }
         .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex-grow: 1; align-content: center; }
         .loc-btn {
-            background: #6d5e4c; border: 3px solid #3e352a; padding: 20px; border-radius: 12px;
-            color: #e0e0e0; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;
+            background: #fff; border: 3px solid #badc58; padding: 15px; border-radius: 12px;
+            color: #333; font-weight: bold; font-size: 0.9rem; cursor: pointer;
         }
-        .loc-btn span { font-size: 2rem; margin-bottom: 5px; }
-        .loc-btn:active { background: #574b3d; transform: scale(0.98); }
-        .loc-btn.safe { border-color: var(--accent); color: var(--accent); }
-        .loc-btn.boss { border-color: var(--danger); color: var(--danger); background: #4a2c2c; }
-
-        /* BATTLE SCREEN */
-        .battle-screen {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--battle-bg); z-index: 100;
-            flex-direction: column; justify-content: space-between; padding: 20px; box-sizing: border-box;
-        }
-
-        .battle-hud {
-            background: rgba(0,0,0,0.4); padding: 10px; border-radius: 10px;
-            border: 1px solid #555; margin-bottom: 10px; text-align: left;
-        }
-        .hp-bar-bg { width: 100%; height: 8px; background: #555; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .hp-bar-bg { width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden; margin-top: 5px; }
         .hp-bar-fill { height: 100%; background: #00e676; width: 100%; transition: width 0.3s; }
         .hp-bar-fill.low { background: #ff5252; }
-        
         .arena { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .sprite { font-size: 5rem; transition: transform 0.2s; }
-        
-        /* ANIMATIONS */
+        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .move-btn { background: #eee; border: 2px solid #333; padding: 15px; border-radius: 10px; font-weight: bold; }
+        .log { font-family: monospace; font-size: 0.9rem; height: 30px; margin-bottom: 10px; font-weight: bold; color: #d63031; }
         .shake { animation: shake 0.4s; }
         .lunge { animation: lunge 0.3s; }
         @keyframes shake { 0% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} 100% {transform: translateX(0);} }
         @keyframes lunge { 0% {transform: scale(1);} 50% {transform: scale(1.4);} 100% {transform: scale(1);} }
 
-        .battle-controls {
-            background: #fff; color: #333; border-radius: 15px 15px 0 0;
-            padding: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-        }
-        .log { font-family: monospace; font-size: 0.9rem; height: 30px; margin-bottom: 10px; font-weight: bold; color: #d63031; }
-        
-        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .move-btn {
-            background: #eee; border: 2px solid #333; padding: 15px;
-            border-radius: 10px; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; font-size: 0.9rem;
-        }
-        .move-btn:active { background: #ccc; }
-        .run-btn { background: #fab1a0; border-color: #d63031; color: #d63031; }
-
-        /* MAIN UI */
-        .status { font-size: 1.4rem; margin: 20px 0; padding: 15px; background: #333; border-radius: 10px; font-weight: bold; border: 1px solid #444; }
+        /* UI BUTTONS */
+        .status { font-size: 1.4rem; margin: 20px 0; padding: 15px; background: #fff; border-radius: 10px; font-weight: bold; border: 2px solid #eee; color: #333; }
         .feed-btn { background: var(--accent); color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .rpg-btn { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; width: 100%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.4); cursor: pointer; }
-        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
-        
+        .rpg-btn { background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; width: 100%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4); cursor: pointer; }
         .settings-toggle { background: none; border: none; color: #666; font-size: 1.5rem; margin-top: 20px; cursor: pointer; opacity: 0.7; }
-        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #444; }
-        .input-group { margin: 15px 0; font-size: 1rem; color: #aaa; }
-        input[type="number"], input[type="time"] { background: #333; border: none; color: white; padding: 10px; border-radius: 5px; width: 60px; text-align: center; font-weight: bold; }
+        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+        .input-group { margin: 15px 0; font-size: 1rem; color: #888; }
+        input { background: #eee; border: none; padding: 5px; border-radius: 5px; }
+        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
+        .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
+
+        /* SWATCHES */
         .theme-label { margin-top: 20px; font-size: 0.9rem; color: #888; display: block; }
         .pastel-swatches { display: flex; justify-content: center; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
-        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
         input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
-        .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
     </style>
 </head>
 <body>
 
-<div class="map-screen" id="mapScreen">
-    <div class="map-header">
-        <h2 style="margin:0;">🗺️ The House Map</h2>
-        <p id="mapLog" style="color:#aaa; font-size:0.9rem; margin-top:5px; height:20px;">Where to explore?</p>
+<div class="gift-overlay" id="giftOverlay">
+    <div id="wrapperBox">
+        <div class="gift-text">MERRY CHRISTMAS!</div>
+        <div class="gift-box" onclick="tapGift()">🎁</div>
+        <div class="gift-progress">Taps Remaining: <span id="tapCount">100</span></div>
+        <div style="color:#aaa; font-size:0.8rem; margin-top:5px;">(Tap fast to unwrap!)</div>
     </div>
     
+    <div class="gift-card-reveal" id="giftCard">
+        <h2 style="color:#eb4d4b;">🎄 Merry Christmas! 🎄</h2>
+        <p style="font-size:1.1rem; color:#333; margin: 20px 0; font-weight: bold;">
+            You have one free 3D print of your choosing!
+            <br><span style="font-size:0.9rem; font-weight:normal;">(I just have to be capable of making it if I need to design it)</span>
+        </p>
+        <div class="fine-print">
+            *fine print: cannot be gifted to anyone else and this coupon is onetime use and depending on size might have to be brought back in person so shipping times may vary.
+        </div>
+        <br>
+        <p style="color:#00bcd4; font-weight:bold;">❄️ UNLOCKED: WINTER THEME ❄️</p>
+        <button class="feed-btn" onclick="closeGift()">Awesome, thanks!</button>
+    </div>
+</div>
+
+<div class="map-screen" id="mapScreen">
+    <div class="map-header">
+        <h2 style="margin:0;">❄️ The Frozen House</h2>
+        <p id="mapLog" style="color:#666; font-size:0.9rem; margin-top:5px;">Brrr! It's cold.</p>
+    </div>
     <div class="battle-hud">
         <div style="display:flex; justify-content:space-between;">
-            <b id="mapPlayerName">Noodle</b>
-            <span>Lvl <span id="mapPlayerLvl">1</span></span>
+            <b id="mapPlayerName">Noodle</b> <span>Lvl <span id="mapPlayerLvl">1</span></span>
         </div>
         <div class="hp-bar-bg"><div class="hp-bar-fill" id="mapPlayerHp"></div></div>
     </div>
-
     <div class="map-grid">
-        <button class="loc-btn safe" onclick="travelTo('livingroom')"><span>🛋️</span>Living Room<br><small>(Safe & Heal)</small></button>
-        <button class="loc-btn" onclick="travelTo('kitchen')"><span>🥣</span>Kitchen<br><small>(Easy)</small></button>
-        <button class="loc-btn" onclick="travelTo('basement')"><span>📦</span>Basement<br><small>(Medium)</small></button>
-        <button class="loc-btn" onclick="travelTo('garage')"><span>🚗</span>Garage<br><small>(Hard)</small></button>
-        <button class="loc-btn boss" id="bossLocBtn" onclick="travelTo('hallway')" style="grid-column: span 2; opacity: 0.5; pointer-events: none;">
-            <span>🧹</span>The Forbidden Hallway<br><small>(BOSS - Lvl 5+)</small>
+        <button class="loc-btn" onclick="travelTo('livingroom')"><span>🛋️</span>Fireplace<br><small>(Warm Up & Heal)</small></button>
+        <button class="loc-btn" onclick="travelTo('kitchen')"><span>🍪</span>Kitchen<br><small>(Enemies: Cookies)</small></button>
+        <button class="loc-btn" onclick="travelTo('basement')"><span>🎁</span>Basement<br><small>(Enemies: Coal)</small></button>
+        <button class="loc-btn" onclick="travelTo('garage')"><span>🛷</span>Garage<br><small>(Enemies: Reindeer)</small></button>
+        <button class="loc-btn" id="bossLocBtn" onclick="travelTo('hallway')" style="grid-column: span 2; opacity: 0.5; pointer-events: none;">
+            <span>☃️</span>The North Pole<br><small>(BOSS)</small>
         </button>
     </div>
-    <button class="secondary" onclick="exitRPG()" style="margin-top:20px;">Exit to Main Menu</button>
+    <button class="secondary" onclick="exitRPG()" style="margin-top:20px;">Exit to App</button>
 </div>
-
 
 <div class="battle-screen" id="battleScreen">
     <div class="battle-hud">
         <div style="display:flex; justify-content:space-between;">
-            <b id="enemyName">Dust Bunny</b>
-            <span>Lvl <span id="enemyLvl">1</span></span>
+            <b id="enemyName">Gingerbread Man</b> <span>Lvl <span id="enemyLvl">1</span></span>
         </div>
         <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHp"></div></div>
     </div>
-
     <div class="arena">
-        <div class="sprite" id="enemySprite">🐰</div>
+        <div class="sprite" id="enemySprite">🍪</div>
         <div style="height: 60px;"></div>
-        <div class="sprite stage-1" id="playerSprite">🐍</div>
+        <div class="sprite stage-1" id="playerSprite">🐍🎅</div>
     </div>
-
     <div class="battle-controls">
         <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-            <b id="playerName">Shoelace</b>
-            <span>Lvl <span id="playerLvl">1</span></span>
+            <b id="playerName">Shoelace</b> <span>Lvl <span id="playerLvl">1</span></span>
         </div>
         <div class="hp-bar-bg" style="margin-bottom:10px;"><div class="hp-bar-fill" id="playerHp"></div></div>
-        
-        <div class="log" id="battleLog">A wild enemy appeared!</div>
-
+        <div class="log" id="battleLog">Merry Crisis!</div>
         <div class="move-grid" id="moveGrid"></div>
-        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="returnToMap()">Continue Exploring</button>
+        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="returnToMap()">Continue</button>
     </div>
 </div>
 
 <div class="container" id="mainCard">
-    <span class="emoji" id="mascot">🐍</span>
+    <span class="emoji" id="mascot">🐍🎅</span>
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
-    <button class="rpg-btn" onclick="startRPG()">⚔️ Enter the RPG World</button>
-
+    <button class="rpg-btn" onclick="startRPG()">⚔️ Play Christmas RPG</button>
     <div class="status" id="statusDisplay">Loading...</div>
-
     <button class="feed-btn" onclick="confirmFeed()">I Fed The Snek!</button>
     <p class="small-text" id="lastFedText"></p>
-
     <button class="settings-toggle" onclick="toggleSettings()">⚙️ Settings</button>
-
+    
     <div class="settings-panel" id="settingsPanel">
         <div class="input-group">Feed every <input type="number" id="interval" value="21" onchange="saveSettings()"> days</div>
         <div class="input-group">At <input type="time" id="feedTime" value="09:00" onchange="saveSettings()"></div>
         <button class="secondary" onclick="addToCalendar()">📅 Update Calendar</button>
+        <button class="secondary" onclick="resetGift()">🎁 Re-Wrap Gift</button>
 
         <span class="theme-label">Theme:</span>
         <div class="pastel-swatches" id="swatchContainer">
@@ -230,33 +247,55 @@
 </div>
 
 <script>
-    // --- APP LOGIC ---
+    // --- APP & RPG LOGIC ---
     const savedInterval = localStorage.getItem('interval');
-    const savedColor = localStorage.getItem('themeColor');
-    const savedTime = localStorage.getItem('feedTime');
-
     if (savedInterval) document.getElementById('interval').value = savedInterval;
-    if (savedTime) document.getElementById('feedTime').value = savedTime;
-    
-    // Theme Loading
-    const initialColor = savedColor || '#C8E6C9';
-    if(initialColor === 'holo') { document.body.classList.add('holo-theme'); } 
-    else { setTheme(initialColor, false); }
-    
     updateDisplay();
 
+    let player = { lvl: 1, hp: 30, maxHp: 30, xp: 0, nextLvl: 50, stage: 1 };
+    let enemy = {};
+    if(localStorage.getItem('rpgSave')) player = JSON.parse(localStorage.getItem('rpgSave'));
+
+    // --- THEME & UNLOCK LOGIC ---
+    const savedColor = localStorage.getItem('themeColor');
+    const goldUnlocked = localStorage.getItem('goldUnlocked');
+    const holoUnlocked = localStorage.getItem('holoUnlocked');
+    const winterUnlocked = localStorage.getItem('winterUnlocked');
+
+    // Load initial theme
+    const initialColor = savedColor || '#C8E6C9';
+    if(initialColor === 'holo') { document.body.classList.add('holo-theme'); } 
+    else if(initialColor === 'winter') { enableWinter(false); }
+    else { setTheme(initialColor, false); }
+
+    // Load Swatches
+    if(goldUnlocked === 'true') addGoldSwatch();
+    if(holoUnlocked === 'true') addHoloSwatch();
+    if(winterUnlocked === 'true') addWinterSwatch();
+
     function setTheme(color, save = true) {
-        document.body.classList.remove('holo-theme');
+        document.body.classList.remove('holo-theme', 'winter-theme');
         document.documentElement.style.setProperty('--bg', color);
         document.getElementById('bgPicker').value = color;
+        // Update button text color for readability if needed
+        document.documentElement.style.setProperty('--text', '#e0e0e0');
         if (save) localStorage.setItem('themeColor', color);
+        stopSnow();
     }
     function setHolo(save = true) {
+        document.body.classList.remove('winter-theme');
         document.body.classList.add('holo-theme');
         if(save) localStorage.setItem('themeColor', 'holo');
+        stopSnow();
     }
-    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
+    function enableWinter(save = true) {
+        document.body.classList.remove('holo-theme');
+        document.body.classList.add('winter-theme');
+        if(save) localStorage.setItem('themeColor', 'winter');
+        startSnow();
+    }
 
+    // Swatch Generators
     function addGoldSwatch() {
         if(document.getElementById('goldSwatch')) return;
         const div = document.createElement('div'); div.id='goldSwatch'; div.className='swatch';
@@ -271,260 +310,226 @@
         div.onclick = function(){ setHolo(); };
         document.getElementById('swatchContainer').appendChild(div);
     }
-
-    function confirmFeed() { if(confirm("Confirm feeding?")) feedSnake(); }
-    function feedSnake() {
-        localStorage.setItem('lastFed', new Date().toISOString());
-        localStorage.setItem('interval', document.getElementById('interval').value);
-        updateDisplay();
-    }
-    function updateDisplay() {
-        const lastFed = localStorage.getItem('lastFed');
-        const interval = parseInt(document.getElementById('interval').value) || 21;
-        const statusDiv = document.getElementById('statusDisplay');
-        if (!lastFed) { statusDiv.innerHTML = "⚠️ No data."; statusDiv.style.color = "var(--danger)"; return; }
-        const nextDate = new Date(new Date(lastFed));
-        nextDate.setDate(nextDate.getDate() + interval);
-        const daysLeft = Math.ceil((nextDate - new Date()) / (1000 * 60 * 60 * 24));
-        document.getElementById('lastFedText').innerText = "Last fed: " + new Date(lastFed).toLocaleDateString();
-        if (daysLeft <= 0) { statusDiv.innerHTML = "🍽️ FEED NOW!"; statusDiv.style.color = "var(--danger)"; }
-        else { statusDiv.innerHTML = `Next feed in <b>${daysLeft} days</b>`; statusDiv.style.color = "var(--accent)"; }
-    }
-    function addToCalendar() {
-        const interval = parseInt(document.getElementById('interval').value) || 21;
-        const nextDate = new Date(); nextDate.setDate(nextDate.getDate() + interval);
-        const dateStr = nextDate.toISOString().replace(/[-:]/g, '').split('.')[0];
-        const icsMsg = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${dateStr}\nSUMMARY:🐍 Feed Snake\nRRULE:FREQ=DAILY;INTERVAL=${interval}\nEND:VEVENT\nEND:VCALENDAR`;
-        const blob = new Blob([icsMsg], { type: 'text/calendar' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'snake.ics'; a.click();
-    }
-    function toggleSettings() {
-        const p = document.getElementById('settingsPanel');
-        p.style.display = p.style.display === 'block' ? 'none' : 'block';
-    }
-    function saveSettings() {
-        localStorage.setItem('interval', document.getElementById('interval').value);
-        localStorage.setItem('feedTime', document.getElementById('feedTime').value);
-        updateDisplay();
+    function addWinterSwatch() {
+        if(document.getElementById('winterSwatch')) return;
+        const div = document.createElement('div'); div.id='winterSwatch'; div.className='swatch';
+        div.style.background = 'linear-gradient(135deg, #e0f7fa, #00bcd4)';
+        div.innerHTML = "❄️"; div.style.display="flex"; div.style.alignItems="center"; div.style.justifyContent="center"; div.style.fontSize="12px";
+        div.onclick = function(){ enableWinter(); };
+        document.getElementById('swatchContainer').appendChild(div);
     }
 
-    // --- RPG ENGINE ---
-    let player = { lvl: 1, hp: 30, maxHp: 30, xp: 0, nextLvl: 50, stage: 1 };
-    let enemy = { name: "", icon: "", hp: 0, maxHp: 0, dmg: 0 };
-    
-    // LOAD SAVE
-    if(localStorage.getItem('rpgSave')) player = JSON.parse(localStorage.getItem('rpgSave'));
-    
-    // RESTORE REWARDS CHECK (Safety Net)
-    if(player.stage >= 2 || localStorage.getItem('goldUnlocked') === 'true') {
-        localStorage.setItem('goldUnlocked', 'true');
-        addGoldSwatch();
+    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
+
+    // --- SNOW LOGIC ---
+    let snowInterval;
+    function startSnow() {
+        if(snowInterval) return; // Already snowing
+        snowInterval = setInterval(() => {
+            const flake = document.createElement('div');
+            flake.innerText = ['❄️', '❅', '❆'][Math.floor(Math.random()*3)];
+            flake.className = 'snowflake';
+            flake.style.left = Math.random() * 100 + 'vw';
+            flake.style.opacity = Math.random();
+            flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(flake);
+            setTimeout(() => flake.remove(), 5000);
+        }, 300);
     }
-    if(player.stage >= 3 || localStorage.getItem('holoUnlocked') === 'true') {
-        localStorage.setItem('holoUnlocked', 'true');
-        addHoloSwatch();
+    function stopSnow() {
+        clearInterval(snowInterval);
+        snowInterval = null;
+        document.querySelectorAll('.snowflake').forEach(el => el.remove());
     }
 
+    // --- GIFT LOGIC ---
+    let taps = 100;
+    const giftOpened = localStorage.getItem('xmasGiftOpened');
+
+    if (giftOpened !== 'true') {
+        document.getElementById('giftOverlay').style.display = 'flex';
+        // Snow during gift opening regardless of theme
+        startSnow();
+    }
+
+    function tapGift() {
+        taps--;
+        document.getElementById('tapCount').innerText = taps;
+        const box = document.querySelector('.gift-box');
+        box.style.transform = `scale(1.1) rotate(${Math.random()*20 - 10}deg)`;
+        setTimeout(() => box.style.transform = 'scale(1) rotate(0deg)', 100);
+
+        if (taps <= 0) {
+            document.getElementById('wrapperBox').style.display = 'none';
+            document.getElementById('giftCard').style.display = 'block';
+            
+            // UNLOCK REWARD
+            localStorage.setItem('xmasGiftOpened', 'true');
+            localStorage.setItem('winterUnlocked', 'true');
+            addWinterSwatch();
+            
+            confettiExplosion();
+        }
+    }
+
+    function closeGift() {
+        document.getElementById('giftOverlay').style.display = 'none';
+        // Switch to winter theme immediately upon close
+        enableWinter();
+    }
+
+    function resetGift() {
+        localStorage.removeItem('xmasGiftOpened');
+        location.reload();
+    }
+
+    function confettiExplosion() {
+        for(let i=0; i<50; i++) {
+            const conf = document.createElement('div');
+            conf.style.position = 'fixed';
+            conf.style.left = '50%'; conf.style.top = '50%';
+            conf.style.width = '10px'; conf.style.height = '10px';
+            conf.style.backgroundColor = ['#badc58', '#ff7675', '#74b9ff'][Math.floor(Math.random()*3)];
+            conf.style.zIndex = 300;
+            document.body.appendChild(conf);
+            const destX = (Math.random() - 0.5) * window.innerWidth;
+            const destY = (Math.random() - 0.5) * window.innerHeight;
+            conf.animate([
+                { transform: 'translate(0,0)' },
+                { transform: `translate(${destX}px, ${destY}px) rotate(720deg)`, opacity: 0 }
+            ], { duration: 1000, fill: 'forwards' });
+        }
+    }
+
+    // --- RPG & APP UTILS ---
     const MOVES = {
-        1: [ 
-            { name: "Boop", dmg: 4, type: "atk" },
-            { name: "Hiss", dmg: 0, type: "debuff", msg: "Enemy dmg down!" },
-            { name: "Panic", dmg: 0, type: "heal", val: 10, msg: "Scared! Healed 10 HP." },
-            { name: "Nip", dmg: 6, type: "atk" }
-        ],
-        2: [ 
-            { name: "Strike", dmg: 12, type: "atk" },
-            { name: "Coil", dmg: 0, type: "heal", val: 20, msg: "Coiled up. Healed 20 HP." },
-            { name: "Tail Whip", dmg: 18, type: "atk", acc: 0.8 },
-            { name: "Venom", dmg: 5, type: "dot", msg: "Enemy is poisoned!" }
-        ],
-        3: [ 
-            { name: "Chomp", dmg: 25, type: "atk" },
-            { name: "Constrict", dmg: 10, type: "stun", msg: "Enemy stunned!" },
-            { name: "Devour", dmg: 20, type: "lifesteal", msg: "Drained HP!" },
-            { name: "Judgement", dmg: 99, type: "ult", acc: 0.5, msg: "JUDGEMENT!" }
-        ]
+        1: [{name:"Boop", dmg:4, type:"atk"}, {name:"Hiss", dmg:0, type:"debuff", msg:"Enemy slowed!"}, {name:"Panic", dmg:0, type:"heal", val:10, msg:"Healed!"}, {name:"Nip", dmg:6, type:"atk"}],
+        2: [{name:"Strike", dmg:12, type:"atk"}, {name:"Coil", dmg:0, type:"heal", val:20, msg:"Healed!"}, {name:"Tail Whip", dmg:18, type:"atk", acc:0.8}, {name:"Venom", dmg:5, type:"dot", msg:"Poisoned!"}],
+        3: [{name:"Chomp", dmg:25, type:"atk"}, {name:"Constrict", dmg:10, type:"stun", msg:"Stunned!"}, {name:"Devour", dmg:20, type:"lifesteal", msg:"Drained!"}, {name:"Judgement", dmg:99, type:"ult", acc:0.5}]
     };
 
     function startRPG() {
         document.getElementById('mainCard').style.display = 'none';
         document.getElementById('mapScreen').style.display = 'flex';
-        checkEvolution();
         updateMapUI();
     }
-
     function exitRPG() {
         document.getElementById('mapScreen').style.display = 'none';
         document.getElementById('mainCard').style.display = 'block';
-        saveGame();
+        localStorage.setItem('rpgSave', JSON.stringify(player));
     }
-
     function updateMapUI() {
         document.getElementById('mapPlayerName').innerText = ["Shoelace", "Danger Noodle", "Nope Rope"][player.stage - 1];
         document.getElementById('mapPlayerLvl').innerText = player.lvl;
-        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100);
-        const pBar = document.getElementById('mapPlayerHp');
-        pBar.style.width = pHpPct + "%";
-        pBar.className = pHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
-        
+        const pPct = (player.hp/player.maxHp)*100;
+        document.getElementById('mapPlayerHp').style.width = pPct+"%";
         const bossBtn = document.getElementById('bossLocBtn');
-        if(player.lvl >= 5) {
-            bossBtn.style.opacity = 1;
-            bossBtn.style.pointerEvents = 'auto';
-        }
+        if(player.lvl >= 5) { bossBtn.style.opacity=1; bossBtn.style.pointerEvents='auto'; }
     }
-
-    function travelTo(location) {
-        const log = document.getElementById('mapLog');
-        let encounterChance = 0.4; 
-        let dangerLevel = 1;
-
-        if(location === 'livingroom') {
-            log.innerText = "You rest on the sofa. HP restored a bit.";
-            player.hp = Math.min(player.maxHp, player.hp + Math.floor(player.maxHp * 0.2));
-            updateMapUI(); saveGame(); return; 
-        } else if (location === 'kitchen') {
-            log.innerText = "Slithering through crumbs..."; dangerLevel = 1; encounterChance = 0.5;
-        } else if (location === 'basement') {
-            log.innerText = "It's dark down here..."; dangerLevel = 2; encounterChance = 0.6;
-        } else if (location === 'garage') {
-            log.innerText = "Smells like gasoline and danger."; dangerLevel = 3; encounterChance = 0.7;
-        } else if (location === 'hallway') {
-             log.innerText = "Entering the forbidden zone..."; dangerLevel = 99; encounterChance = 1.0; 
+    function travelTo(loc) {
+        let chance = 0.5; let danger = 1;
+        if(loc === 'livingroom') { 
+            player.hp = Math.min(player.maxHp, player.hp + Math.floor(player.maxHp*0.3));
+            document.getElementById('mapLog').innerText = "Warmed up by the fire. HP Restored.";
+            updateMapUI(); localStorage.setItem('rpgSave', JSON.stringify(player)); return;
         }
-
-        if(Math.random() < encounterChance) {
-            setTimeout(() => { generateEnemy(dangerLevel); }, 500);
-        }
-    }
-
-    function checkEvolution() {
-        let newStage = 1;
-        if(player.lvl >= 5) newStage = 2;
-        if(player.lvl >= 10) newStage = 3;
+        else if (loc === 'hallway') { danger = 99; chance = 1.0; } 
+        else if (loc === 'garage') { danger = 3; chance = 0.7; }
         
-        if (newStage > player.stage) {
-            alert(`What? Noodle is evolving into Stage ${newStage}!`);
-            player.stage = newStage;
-            player.maxHp += 30; player.hp = player.maxHp;
-            if(newStage === 2) { localStorage.setItem('goldUnlocked', 'true'); addGoldSwatch(); setTheme('#FFD700'); alert("Unlocked GOLD THEME!"); }
-            if(newStage === 3) { localStorage.setItem('holoUnlocked', 'true'); addHoloSwatch(); setHolo(); alert("Unlocked HOLOGRAPHIC THEME!"); }
-        }
-        document.getElementById('playerSprite').className = `sprite stage-${player.stage}`;
-        document.getElementById('playerName').innerText = ["Shoelace", "Danger Noodle", "Nope Rope"][player.stage - 1];
+        if(Math.random() < chance) { setTimeout(() => generateEnemy(danger), 400); }
+        else { document.getElementById('mapLog').innerText = "Safe... for now."; }
     }
-
-    function generateEnemy(dangerLevel) {
+    function generateEnemy(danger) {
         document.getElementById('mapScreen').style.display = 'none';
         document.getElementById('battleScreen').style.display = 'flex';
-
-        if (dangerLevel === 99) {
-            enemy = { name: "THE VACUUM", icon: "🧹", lvl: player.lvl + 2, maxHp: 200, hp: 200, atk: 25 };
+        
+        if(danger === 99) {
+            enemy = { name: "THE GRINCH", icon: "🧟", hp: 200, maxHp: 200, atk: 25 };
         } else {
             const list = [
-                { name: "Dust Bunny", icon: "🐰", hp: 15, atk: 3, tier: 1 },
-                { name: "Feisty Cricket", icon: "🦗", hp: 25, atk: 5, tier: 1 },
-                { name: "Spider", icon: "🕷️", hp: 40, atk: 8, tier: 2 },
-                { name: "Cat Paw", icon: "🐾", hp: 60, atk: 12, tier: 3 },
-                { name: "Ice Mouse", icon: "🧊", hp: 100, atk: 15, tier: 3 }
+                {n:"Gingerbread Man", i:"🍪", hp:20, atk:4},
+                {n:"Evil Elf", i:"🧝", hp:35, atk:6},
+                {n:"Killer Reindeer", i:"🦌", hp:50, atk:10},
+                {n:"Angry Snowman", i:"☃️", hp:80, atk:14}
             ];
-            let possible = list.filter(e => e.tier === dangerLevel || e.tier === dangerLevel -1);
-            if(possible.length === 0) possible = [list[0]]; 
-
-            const base = possible[Math.floor(Math.random() * possible.length)];
-            enemy = { ...base, lvl: player.lvl, maxHp: base.hp + (player.lvl*5), hp: base.hp + (player.lvl*5), atk: base.atk + player.lvl };
+            const base = list[Math.min(list.length-1, Math.floor(Math.random() * (player.lvl/2 + 1)))];
+            enemy = { ...base, maxHp: base.hp+(player.lvl*5), hp: base.hp+(player.lvl*5), atk: base.atk+player.lvl };
         }
         
         document.getElementById('enemyName').innerText = enemy.name;
-        document.getElementById('enemyLvl').innerText = enemy.lvl;
+        document.getElementById('enemyLvl').innerText = player.lvl;
         document.getElementById('enemySprite').innerText = enemy.icon;
+        document.getElementById('playerSprite').innerText = "🐍🎅";
         document.getElementById('battleLog').innerText = `A wild ${enemy.name} appeared!`;
-        document.getElementById('battleLog').style.color = "#d63031";
+        
+        const grid = document.getElementById('moveGrid'); grid.innerHTML = "";
+        MOVES[player.stage].forEach(m => {
+            const btn = document.createElement('button'); btn.className='move-btn'; btn.innerText=m.name;
+            btn.onclick = () => executeMove(m); grid.appendChild(btn);
+        });
+        const run = document.createElement('button'); run.className='move-btn run-btn'; run.innerText="RUN";
+        run.onclick = returnToMap; grid.appendChild(run);
         
         document.getElementById('moveGrid').style.display = 'grid';
         document.getElementById('continueBtn').style.display = 'none';
-        
-        renderMoves();
         renderUI();
     }
-
-    function renderMoves() {
-        const grid = document.getElementById('moveGrid'); grid.innerHTML = ""; 
-        const currentMoves = MOVES[player.stage];
-        currentMoves.forEach(m => {
-            const btn = document.createElement('button');
-            btn.className = 'move-btn'; btn.innerText = m.name; btn.onclick = () => executeMove(m);
-            grid.appendChild(btn);
-        });
-        const run = document.createElement('button');
-        run.className = 'move-btn run-btn'; run.innerText = "RUN";
-        run.onclick = returnToMap;
-        grid.appendChild(run);
+    function executeMove(m) {
+        let dmg = 0; let msg = "";
+        if(m.type==='atk') { dmg=m.dmg+player.lvl; enemy.hp-=dmg; msg=`Hit for ${dmg}!`; }
+        else if(m.type==='heal') { player.hp+=m.val; msg="Healed!"; }
+        setTimeout(() => {
+            if(enemy.hp <= 0) { victory(); }
+            else { 
+                player.hp -= enemy.atk; 
+                document.getElementById('battleLog').innerText = `Enemy hit for ${enemy.atk}!`;
+                renderUI();
+                if(player.hp <= 0) {
+                    player.hp = player.maxHp; player.xp = 0;
+                    alert("You fainted! XP Lost."); returnToMap();
+                }
+            }
+        }, 800);
+        document.getElementById('battleLog').innerText = msg; renderUI();
     }
-
-    function executeMove(move) {
-        let msg = ""; let dmg = 0;
-        if (move.acc && Math.random() > move.acc) { document.getElementById('battleLog').innerText = "Noodle missed!"; endPlayerTurn(); return; }
-        document.getElementById('playerSprite').classList.add('lunge'); setTimeout(()=>document.getElementById('playerSprite').classList.remove('lunge'), 300);
-
-        if (move.type === 'atk') { dmg = move.dmg + Math.floor(Math.random() * 3) + player.lvl; enemy.hp -= dmg; msg = `Hit for ${dmg} damage!`; } 
-        else if (move.type === 'heal') { player.hp = Math.min(player.maxHp, player.hp + move.val + player.lvl); msg = move.msg; } 
-        else if (move.type === 'debuff') { enemy.atk = Math.max(1, enemy.atk - 2); msg = move.msg; } 
-        else if (move.type === 'stun') { enemy.stunned = true; enemy.hp -= move.dmg; msg = move.msg; } 
-        else if (move.type === 'lifesteal') { enemy.hp -= move.dmg; player.hp = Math.min(player.maxHp, player.hp + (move.dmg/2)); msg = move.msg; } 
-        else if (move.type === 'dot') { enemy.poisoned = 3; enemy.hp -= move.dmg; msg = move.msg; } 
-        else if (move.type === 'ult') { enemy.hp -= move.dmg; msg = "JUDGEMENT!!!"; }
-
-        document.getElementById('enemySprite').classList.add('shake'); setTimeout(()=>document.getElementById('enemySprite').classList.remove('shake'), 400);
-        document.getElementById('battleLog').innerText = msg; document.getElementById('battleLog').style.color = "#00b894";
-        renderUI();
-
-        if (enemy.hp <= 0) { victory(); } else { document.getElementById('moveGrid').style.pointerEvents = 'none'; setTimeout(enemyTurn, 1000); }
-    }
-
-    function enemyTurn() {
-        if(enemy.stunned) { document.getElementById('battleLog').innerText = `${enemy.name} is stunned!`; enemy.stunned = false; } 
-        else {
-            let dmg = enemy.atk + Math.floor(Math.random() * 3); player.hp -= dmg;
-            document.getElementById('battleLog').innerText = `${enemy.name} dealt ${dmg} dmg!`; document.getElementById('battleLog').style.color = "#d63031";
-            if(enemy.poisoned) { enemy.hp -= 5; enemy.poisoned--; }
-        }
-        renderUI();
-        document.getElementById('moveGrid').style.pointerEvents = 'auto';
-        if (player.hp <= 0) {
-            document.getElementById('battleLog').innerText = "Noodle fainted! (XP Lost)";
-            player.xp = 0; player.hp = player.maxHp; saveGame();
-            setTimeout(returnToMap, 2000);
-        } else if (enemy.hp <= 0) { victory(); }
-    }
-
     function victory() {
-        const xpGain = 15 + (enemy.atk * 2); player.xp += xpGain;
-        document.getElementById('battleLog').innerText = `Victory! +${xpGain} XP`;
-        if (player.xp >= player.nextLvl) {
-            player.lvl++; player.xp -= player.nextLvl; player.nextLvl = Math.floor(player.nextLvl * 1.5);
-            player.maxHp += 10; player.hp = player.maxHp; alert("LEVEL UP!"); checkEvolution();
-        }
-        saveGame();
-        document.getElementById('moveGrid').style.display = 'none';
-        document.getElementById('continueBtn').style.display = 'block';
+        player.xp += 20;
+        if(player.xp >= player.nextLvl) { player.lvl++; player.xp=0; player.nextLvl*=1.5; player.maxHp+=10; player.hp=player.maxHp; alert("Level Up!"); checkEvolution(); }
+        document.getElementById('battleLog').innerText = "Victory!";
+        document.getElementById('moveGrid').style.display='none';
+        document.getElementById('continueBtn').style.display='block';
+        localStorage.setItem('rpgSave', JSON.stringify(player));
     }
-
+    function checkEvolution() {
+        if(player.lvl >= 5 && player.stage < 2) { player.stage=2; alert("Evolved to Danger Noodle!"); }
+        if(player.lvl >= 10 && player.stage < 3) { player.stage=3; alert("Evolved to Nope Rope!"); }
+    }
     function renderUI() {
+        document.getElementById('enemyHp').style.width = Math.max(0, (enemy.hp/enemy.maxHp)*100) + "%";
+        document.getElementById('playerHp').style.width = Math.max(0, (player.hp/player.maxHp)*100) + "%";
         document.getElementById('playerLvl').innerText = player.lvl;
-        const pHpPct = Math.max(0, (player.hp / player.maxHp) * 100); const pBar = document.getElementById('playerHp');
-        pBar.style.width = pHpPct + "%"; pBar.className = pHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
-        const eHpPct = Math.max(0, (enemy.hp / enemy.maxHp) * 100); const eBar = document.getElementById('enemyHp');
-        eBar.style.width = eHpPct + "%"; eBar.className = eHpPct < 30 ? "hp-bar-fill low" : "hp-bar-fill";
     }
-
     function returnToMap() {
         document.getElementById('battleScreen').style.display = 'none';
         document.getElementById('mapScreen').style.display = 'flex';
         updateMapUI();
-        saveGame();
     }
-    function saveGame() { localStorage.setItem('rpgSave', JSON.stringify(player)); }
+    function toggleSettings() {
+        const p = document.getElementById('settingsPanel'); p.style.display = p.style.display==='block'?'none':'block';
+    }
+    function saveSettings() { localStorage.setItem('interval', document.getElementById('interval').value); updateDisplay(); }
+    function confirmFeed() { if(confirm("Confirm?")) feedSnake(); }
+    function feedSnake() { localStorage.setItem('lastFed', new Date().toISOString()); updateDisplay(); }
+    function updateDisplay() {
+        const last = localStorage.getItem('lastFed'); const int = parseInt(document.getElementById('interval').value)||21;
+        if(!last) return;
+        const next = new Date(new Date(last)); next.setDate(next.getDate()+int);
+        const diff = Math.ceil((next - new Date())/(1000*60*60*24));
+        document.getElementById('lastFedText').innerText = "Last: "+new Date(last).toLocaleDateString();
+        document.getElementById('statusDisplay').innerText = diff <= 0 ? "FEED NOW!" : `Next: ${diff} days`;
+    }
+    function addToCalendar() { alert("Calendar updated (Simulated)"); }
 </script>
 </body>
 </html>
