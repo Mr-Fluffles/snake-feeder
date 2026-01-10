@@ -11,11 +11,11 @@
             --text: #e0e0e0;
             --accent: #00e676;
             --danger: #ff5252;
-            --battle-bg: #2d3436;
-            --map-bg: #4a3f35;
+            --coin: #ffd700;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -31,505 +31,429 @@
             padding-bottom: 50px;
         }
 
-        /* HOLOGRAPHIC THEME */
+        /* THEMES */
+        body.block-theme {
+            background-color: #009432;
+            background-image: radial-gradient(rgba(0,0,0,0.2) 15%, transparent 16%), radial-gradient(rgba(255,255,255,0.1) 15%, transparent 16%);
+            background-size: 20px 20px;
+            --card: #f5f6fa; --text: #2f3640; --accent: #e84118;
+        }
         body.holo-theme {
             background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb);
             background-size: 800% 800%;
             animation: holoGradient 10s ease infinite;
         }
-        @keyframes holoGradient {
-            0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
-        }
-
-        /* WINTER THEME (The New Unlock) */
-        body.winter-theme {
-            background: linear-gradient(to bottom, #e0f7fa, #ffffff);
-            --card: rgba(255, 255, 255, 0.9);
-            --text: #2c3e50;
-            --accent: #00bcd4;
-        }
-        
-        /* SNOW ANIMATION */
-        .snowflake {
-            position: fixed; top: -10px; z-index: 9999;
-            color: #fff; text-shadow: 0 0 5px rgba(0,0,0,0.3);
-            user-select: none; pointer-events: none;
-            animation: fall linear forwards;
-        }
-        @keyframes fall { to { transform: translateY(110vh); } }
+        @keyframes holoGradient { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
         .container {
             background: var(--card);
             padding: 1.5rem;
             border-radius: 20px;
-            width: 75%;
-            max-width: 350px;
+            width: 80%;
+            max-width: 380px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
             z-index: 10;
             margin-top: 20px;
-            transition: background 0.5s, color 0.5s;
+            transition: all 0.5s ease;
         }
+
         h1 { margin-top: 0; font-size: 1.6rem; }
-        .emoji { font-size: 3rem; display: block; margin-bottom: 10px; transition: filter 0.5s; }
         
-        /* GIFT BOX OVERLAY */
+        /* MASCOT AREA */
+        .mascot-container {
+            font-size: 4rem; margin-bottom: 10px; cursor: pointer;
+            user-select: none; transition: transform 0.1s;
+        }
+        .mascot-container:active { transform: scale(0.9); }
+        .hat { font-size: 0.6em; position: absolute; top: -10px; right: 0; }
+
+        /* CURRENCY */
+        .wallet {
+            background: rgba(0,0,0,0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--coin);
+            border: 1px solid var(--coin);
+        }
+
+        /* CLOSET */
+        .closet-panel {
+            display: none;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 1px dashed #666;
+        }
+        .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+        .shop-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid transparent;
+        }
+        .shop-item.owned { background: rgba(0, 230, 118, 0.2); }
+        .shop-item.selected { border-color: var(--accent); }
+        .shop-icon { font-size: 2rem; }
+        .price-tag { font-size: 0.8rem; margin-top: 5px; color: var(--coin); }
+
+        /* UI ELEMENTS */
+        .status { font-size: 1.2rem; margin: 20px 0; padding: 15px; background: #333; border-radius: 10px; font-weight: bold; border: 1px solid #444; color: #fff; }
+        body.block-theme .status { background: #fff; color: #333; }
+        
+        .feed-btn { background: var(--accent); color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
+        
+        .settings-toggle { background: none; border: none; color: #666; font-size: 1.5rem; margin-top: 20px; cursor: pointer; opacity: 0.7; }
+        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #444; }
+        .input-group { margin: 15px 0; font-size: 1rem; color: #aaa; }
+        input { background: #333; color: white; border: none; padding: 5px; border-radius: 5px; text-align: center; font-weight: bold;}
+        body.block-theme input { background: #ddd; color: #333; }
+        
+        /* BIRTHDAY OVERLAY */
         .gift-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 200;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-        .gift-box {
-            font-size: 8rem; cursor: pointer; transition: transform 0.1s; user-select: none;
-        }
-        .gift-box:active { transform: scale(0.9); }
-        .gift-text { color: white; font-weight: bold; margin-top: 20px; font-size: 1.5rem; }
-        .gift-progress { color: #00e676; margin-top: 10px; font-family: monospace; }
+        .brick-pile { font-size: 5rem; cursor: pointer; user-select: none; transition: transform 0.1s; margin-bottom: 20px; }
+        .brick-pile:active { transform: scale(0.9); }
+        .build-area { width: 200px; height: 150px; border-bottom: 4px solid #fff; display: flex; align-items: flex-end; justify-content: center; position: relative; margin-bottom: 30px; }
+        .lego-brick { width: 40px; height: 20px; border: 1px solid rgba(0,0,0,0.2); position: absolute; }
         
         .gift-card-reveal {
             background: white; padding: 25px; border-radius: 15px; width: 85%; max-width: 400px;
-            text-align: center; display: none; box-shadow: 0 0 50px #fff;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #333;
+            text-align: center; display: none; box-shadow: 0 0 50px #fff; color: #333; border: 5px solid #e84118;
         }
-        .fine-print {
-            font-size: 0.6rem; color: #777; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; line-height: 1.2;
-        }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-
-        /* RPG & MAP STYLES */
-        .stage-1 { filter: none; }
-        .stage-2 { filter: hue-rotate(180deg) saturate(1.5); }
-        .stage-3 { filter: invert(1) drop-shadow(0 0 5px #ff0000); }
-        .map-screen, .battle-screen {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 90; flex-direction: column; padding: 20px; box-sizing: border-box;
-        }
-        .map-screen { background: var(--map-bg); }
-        .battle-screen { background: var(--battle-bg); z-index: 100; }
-        .map-header, .battle-hud, .battle-controls {
-            background: rgba(255,255,255,0.9); padding: 10px; border-radius: 10px;
-            margin-bottom: 10px; text-align: left; color: #333;
-        }
-        .map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; flex-grow: 1; align-content: center; }
-        .loc-btn {
-            background: #fff; border: 3px solid #badc58; padding: 15px; border-radius: 12px;
-            color: #333; font-weight: bold; font-size: 0.9rem; cursor: pointer;
-        }
-        .hp-bar-bg { width: 100%; height: 8px; background: #ddd; border-radius: 4px; overflow: hidden; margin-top: 5px; }
-        .hp-bar-fill { height: 100%; background: #00e676; width: 100%; transition: width 0.3s; }
-        .hp-bar-fill.low { background: #ff5252; }
-        .arena { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .sprite { font-size: 5rem; transition: transform 0.2s; }
-        .move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .move-btn { background: #eee; border: 2px solid #333; padding: 15px; border-radius: 10px; font-weight: bold; }
-        .log { font-family: monospace; font-size: 0.9rem; height: 30px; margin-bottom: 10px; font-weight: bold; color: #d63031; }
-        .shake { animation: shake 0.4s; }
-        .lunge { animation: lunge 0.3s; }
-        @keyframes shake { 0% {transform: translateX(0);} 25% {transform: translateX(-10px);} 75% {transform: translateX(10px);} 100% {transform: translateX(0);} }
-        @keyframes lunge { 0% {transform: scale(1);} 50% {transform: scale(1.4);} 100% {transform: scale(1);} }
-
-        /* UI BUTTONS */
-        .status { font-size: 1.4rem; margin: 20px 0; padding: 15px; background: #fff; border-radius: 10px; font-weight: bold; border: 2px solid #eee; color: #333; }
-        .feed-btn { background: var(--accent); color: #000; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .rpg-btn { background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; border: none; padding: 12px; border-radius: 50px; font-weight: bold; width: 100%; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(9, 132, 227, 0.4); cursor: pointer; }
-        .settings-toggle { background: none; border: none; color: #666; font-size: 1.5rem; margin-top: 20px; cursor: pointer; opacity: 0.7; }
-        .settings-panel { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
-        .input-group { margin: 15px 0; font-size: 1rem; color: #888; }
-        input { background: #eee; border: none; padding: 5px; border-radius: 5px; }
-        .secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 20px; border-radius: 50px; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 100%; }
         .small-text { font-size: 0.8rem; color: #888; margin-top: 10px;}
-
-        /* SWATCHES */
-        .theme-label { margin-top: 20px; font-size: 0.9rem; color: #888; display: block; }
-        .pastel-swatches { display: flex; justify-content: center; gap: 10px; margin: 10px 0; flex-wrap: wrap; }
-        .swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .manual-picker-wrapper { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.8rem; color: #666; }
-        input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
     </style>
 </head>
 <body>
 
 <div class="gift-overlay" id="giftOverlay">
     <div id="wrapperBox">
-        <div class="gift-text">MERRY CHRISTMAS!</div>
-        <div class="gift-box" onclick="tapGift()">🎁</div>
-        <div class="gift-progress">Taps Remaining: <span id="tapCount">100</span></div>
-        <div style="color:#aaa; font-size:0.8rem; margin-top:5px;">(Tap fast to unwrap!)</div>
+        <h2 style="color:white;">HAPPY 15TH BIRTHDAY!</h2>
+        <div class="build-area" id="buildArea"></div>
+        <div class="brick-pile" onclick="tapBrick()">🧱</div>
+        <div style="color:#fbc531; font-family: monospace;">Bricks needed: <span id="tapCount">15</span></div>
     </div>
     
     <div class="gift-card-reveal" id="giftCard">
-        <h2 style="color:#eb4d4b;">🎄 Merry Christmas! 🎄</h2>
-        <p style="font-size:1.1rem; color:#333; margin: 20px 0; font-weight: bold;">
-            You have one free 3D print of your choosing!
-            <br><span style="font-size:0.9rem; font-weight:normal;">(I just have to be capable of making it if I need to design it)</span>
-        </p>
-        <div class="fine-print">
-            *fine print: cannot be gifted to anyone else and this coupon is onetime use and depending on size might have to be brought back in person so shipping times may vary.
-        </div>
-        <br>
-        <p style="color:#00bcd4; font-weight:bold;">❄️ UNLOCKED: WINTER THEME ❄️</p>
-        <button class="feed-btn" onclick="closeGift()">Awesome, thanks!</button>
+        <h2 style="color:#e84118;">🧱 MASTER BUILDER! 🧱</h2>
+        <p style="font-size:1.2rem; font-weight: bold;">I got you the LEGO Flowers Bouquet Set!</p>
+        <p style="color:#777; font-size:0.8rem;">(Check your DMs/Room for the real thing)</p>
+        <button class="feed-btn" onclick="closeGift()" style="background:#009432;">Awesome!</button>
     </div>
 </div>
 
-<div class="map-screen" id="mapScreen">
-    <div class="map-header">
-        <h2 style="margin:0;">❄️ The Frozen House</h2>
-        <p id="mapLog" style="color:#666; font-size:0.9rem; margin-top:5px;">Brrr! It's cold.</p>
+<div class="container">
+    <div class="wallet">
+        <span>🪙</span> <span id="coinBalance">0</span> Scales
     </div>
-    <div class="battle-hud">
-        <div style="display:flex; justify-content:space-between;">
-            <b id="mapPlayerName">Noodle</b> <span>Lvl <span id="mapPlayerLvl">1</span></span>
-        </div>
-        <div class="hp-bar-bg"><div class="hp-bar-fill" id="mapPlayerHp"></div></div>
-    </div>
-    <div class="map-grid">
-        <button class="loc-btn" onclick="travelTo('livingroom')"><span>🛋️</span>Fireplace<br><small>(Warm Up & Heal)</small></button>
-        <button class="loc-btn" onclick="travelTo('kitchen')"><span>🍪</span>Kitchen<br><small>(Enemies: Cookies)</small></button>
-        <button class="loc-btn" onclick="travelTo('basement')"><span>🎁</span>Basement<br><small>(Enemies: Coal)</small></button>
-        <button class="loc-btn" onclick="travelTo('garage')"><span>🛷</span>Garage<br><small>(Enemies: Reindeer)</small></button>
-        <button class="loc-btn" id="bossLocBtn" onclick="travelTo('hallway')" style="grid-column: span 2; opacity: 0.5; pointer-events: none;">
-            <span>☃️</span>The North Pole<br><small>(BOSS)</small>
-        </button>
-    </div>
-    <button class="secondary" onclick="exitRPG()" style="margin-top:20px;">Exit to App</button>
-</div>
 
-<div class="battle-screen" id="battleScreen">
-    <div class="battle-hud">
-        <div style="display:flex; justify-content:space-between;">
-            <b id="enemyName">Gingerbread Man</b> <span>Lvl <span id="enemyLvl">1</span></span>
-        </div>
-        <div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHp"></div></div>
-    </div>
-    <div class="arena">
-        <div class="sprite" id="enemySprite">🍪</div>
-        <div style="height: 60px;"></div>
-        <div class="sprite stage-1" id="playerSprite">🐍🎅</div>
-    </div>
-    <div class="battle-controls">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-            <b id="playerName">Shoelace</b> <span>Lvl <span id="playerLvl">1</span></span>
-        </div>
-        <div class="hp-bar-bg" style="margin-bottom:10px;"><div class="hp-bar-fill" id="playerHp"></div></div>
-        <div class="log" id="battleLog">Merry Crisis!</div>
-        <div class="move-grid" id="moveGrid"></div>
-        <button class="move-btn" id="continueBtn" style="width:100%; display:none; margin-top:10px;" onclick="returnToMap()">Continue</button>
-    </div>
-</div>
-
-<div class="container" id="mainCard">
-    <span class="emoji" id="mascot">🐍🎅</span>
+    <div class="mascot-container" onclick="dailyBoop()">
+        <span id="mascotIcon">🐍</span>
+        <span id="hatIcon"></span> </div>
+    
     <h1 id="titleText">Danger Noodle Tracker</h1>
     
-    <button class="rpg-btn" onclick="startRPG()">⚔️ Play Christmas RPG</button>
     <div class="status" id="statusDisplay">Loading...</div>
-    <button class="feed-btn" onclick="confirmFeed()">I Fed The Snek!</button>
+
+    <button class="feed-btn" onclick="confirmFeed()">I Fed The Snek! (+50 🪙)</button>
     <p class="small-text" id="lastFedText"></p>
-    <button class="settings-toggle" onclick="toggleSettings()">⚙️ Settings</button>
-    
+
+    <button class="secondary" onclick="toggleCloset()" style="margin-top: 10px; border-color: #aaa; color: #aaa;">🎩 Open Closet</button>
+
+    <div class="closet-panel" id="closetPanel">
+        <h3>Noodle Fashion</h3>
+        <p style="font-size:0.8rem; color:#888;">Tap to Equip or Buy</p>
+        <div class="shop-grid" id="shopGrid">
+            </div>
+    </div>
+
+    <button class="settings-toggle" onclick="toggleSettings()">⚙️</button>
+
     <div class="settings-panel" id="settingsPanel">
         <div class="input-group">Feed every <input type="number" id="interval" value="21" onchange="saveSettings()"> days</div>
         <div class="input-group">At <input type="time" id="feedTime" value="09:00" onchange="saveSettings()"></div>
         <button class="secondary" onclick="addToCalendar()">📅 Update Calendar</button>
-        <button class="secondary" onclick="resetGift()">🎁 Re-Wrap Gift</button>
 
-        <span class="theme-label">Theme:</span>
-        <div class="pastel-swatches" id="swatchContainer">
-            <div class="swatch" style="background: #C8E6C9;" onclick="setTheme('#C8E6C9')"></div>
-            <div class="swatch" style="background: #E1BEE7;" onclick="setTheme('#E1BEE7')"></div>
-            <div class="swatch" style="background: #B3E5FC;" onclick="setTheme('#B3E5FC')"></div>
-            <div class="swatch" style="background: #FFCCBC;" onclick="setTheme('#FFCCBC')"></div>
+        <span class="theme-label" style="display:block; margin-top:15px; color:#888;">Theme:</span>
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:5px;">
+            <button onclick="setTheme('#C8E6C9')" style="width:30px; height:30px; background:#C8E6C9; border-radius:50%; border:none;"></button>
+            <button onclick="setTheme('#E1BEE7')" style="width:30px; height:30px; background:#E1BEE7; border-radius:50%; border:none;"></button>
+            <button onclick="enableBlock()" style="width:30px; height:30px; background:#009432; border-radius:50%; border:2px solid gold; cursor:pointer;">🧱</button>
         </div>
-        <div class="manual-picker-wrapper">custom: <input type="color" id="bgPicker" value="#C8E6C9"></div>
     </div>
 </div>
 
 <script>
-    // --- APP & RPG LOGIC ---
+    // --- STATE MANAGEMENT ---
+    let scales = parseInt(localStorage.getItem('scales') || 0);
+    let inventory = JSON.parse(localStorage.getItem('inventory') || '["none"]');
+    let currentHat = localStorage.getItem('currentHat') || 'none';
+    let lastBoop = localStorage.getItem('lastBoop');
+
+    const ITEMS = [
+        { id: 'none', icon: '❌', price: 0, name: 'None' },
+        { id: 'tophat', icon: '🎩', price: 50, name: 'Fancy' },
+        { id: 'cowboy', icon: '🤠', price: 100, name: 'Yeehaw' },
+        { id: 'bow', icon: '🎀', price: 150, name: 'Pretty' },
+        { id: 'cool', icon: '😎', price: 200, name: 'Cool' },
+        { id: 'crown', icon: '👑', price: 300, name: 'Royal' },
+        { id: 'party', icon: '🥳', price: 500, name: 'Party' }
+    ];
+
+    // --- INIT ---
+    updateWallet();
+    renderMascot();
+    
+    // Check Date for Birthday
+    checkBirthday();
+    
+    // Standard Tracker Init
     const savedInterval = localStorage.getItem('interval');
     if (savedInterval) document.getElementById('interval').value = savedInterval;
     updateDisplay();
-
-    let player = { lvl: 1, hp: 30, maxHp: 30, xp: 0, nextLvl: 50, stage: 1 };
-    let enemy = {};
-    if(localStorage.getItem('rpgSave')) player = JSON.parse(localStorage.getItem('rpgSave'));
-
-    // --- THEME & UNLOCK LOGIC ---
+    
+    // Theme Init
     const savedColor = localStorage.getItem('themeColor');
-    const goldUnlocked = localStorage.getItem('goldUnlocked');
-    const holoUnlocked = localStorage.getItem('holoUnlocked');
-    const winterUnlocked = localStorage.getItem('winterUnlocked');
+    if(savedColor === 'block') enableBlock(false);
+    else setTheme(savedColor || '#C8E6C9', false);
 
-    // Load initial theme
-    const initialColor = savedColor || '#C8E6C9';
-    if(initialColor === 'holo') { document.body.classList.add('holo-theme'); } 
-    else if(initialColor === 'winter') { enableWinter(false); }
-    else { setTheme(initialColor, false); }
 
-    // Load Swatches
-    if(goldUnlocked === 'true') addGoldSwatch();
-    if(holoUnlocked === 'true') addHoloSwatch();
-    if(winterUnlocked === 'true') addWinterSwatch();
-
-    function setTheme(color, save = true) {
-        document.body.classList.remove('holo-theme', 'winter-theme');
-        document.documentElement.style.setProperty('--bg', color);
-        document.getElementById('bgPicker').value = color;
-        // Update button text color for readability if needed
-        document.documentElement.style.setProperty('--text', '#e0e0e0');
-        if (save) localStorage.setItem('themeColor', color);
-        stopSnow();
-    }
-    function setHolo(save = true) {
-        document.body.classList.remove('winter-theme');
-        document.body.classList.add('holo-theme');
-        if(save) localStorage.setItem('themeColor', 'holo');
-        stopSnow();
-    }
-    function enableWinter(save = true) {
-        document.body.classList.remove('holo-theme');
-        document.body.classList.add('winter-theme');
-        if(save) localStorage.setItem('themeColor', 'winter');
-        startSnow();
+    // --- CURRENCY & SHOP LOGIC ---
+    function updateWallet() {
+        document.getElementById('coinBalance').innerText = scales;
+        localStorage.setItem('scales', scales);
     }
 
-    // Swatch Generators
-    function addGoldSwatch() {
-        if(document.getElementById('goldSwatch')) return;
-        const div = document.createElement('div'); div.id='goldSwatch'; div.className='swatch';
-        div.style.background = 'linear-gradient(135deg, #FFD700, #FDB931)';
-        div.onclick = function(){ setTheme('#FFD700'); };
-        document.getElementById('swatchContainer').appendChild(div);
-    }
-    function addHoloSwatch() {
-        if(document.getElementById('holoSwatch')) return;
-        const div = document.createElement('div'); div.id='holoSwatch'; div.className='swatch';
-        div.style.background = 'linear-gradient(135deg, #fbc2eb, #a6c1ee)';
-        div.onclick = function(){ setHolo(); };
-        document.getElementById('swatchContainer').appendChild(div);
-    }
-    function addWinterSwatch() {
-        if(document.getElementById('winterSwatch')) return;
-        const div = document.createElement('div'); div.id='winterSwatch'; div.className='swatch';
-        div.style.background = 'linear-gradient(135deg, #e0f7fa, #00bcd4)';
-        div.innerHTML = "❄️"; div.style.display="flex"; div.style.alignItems="center"; div.style.justifyContent="center"; div.style.fontSize="12px";
-        div.onclick = function(){ enableWinter(); };
-        document.getElementById('swatchContainer').appendChild(div);
+    function dailyBoop() {
+        const today = new Date().toDateString();
+        if (lastBoop !== today) {
+            scales += 10;
+            lastBoop = today;
+            localStorage.setItem('lastBoop', today);
+            updateWallet();
+            alert("Daily Boop! +10 Scales 🪙");
+            
+            // Animation
+            const m = document.querySelector('.mascot-container');
+            m.style.transform = "scale(1.2) rotate(10deg)";
+            setTimeout(() => m.style.transform = "scale(1) rotate(0deg)", 200);
+        } else {
+            // Just wiggle if already booped
+            const m = document.querySelector('.mascot-container');
+            m.style.transform = "rotate(-10deg)";
+            setTimeout(() => m.style.transform = "rotate(0deg)", 100);
+        }
     }
 
-    document.getElementById('bgPicker').addEventListener('input', function(e) { setTheme(e.target.value); });
-
-    // --- SNOW LOGIC ---
-    let snowInterval;
-    function startSnow() {
-        if(snowInterval) return; // Already snowing
-        snowInterval = setInterval(() => {
-            const flake = document.createElement('div');
-            flake.innerText = ['❄️', '❅', '❆'][Math.floor(Math.random()*3)];
-            flake.className = 'snowflake';
-            flake.style.left = Math.random() * 100 + 'vw';
-            flake.style.opacity = Math.random();
-            flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            document.body.appendChild(flake);
-            setTimeout(() => flake.remove(), 5000);
-        }, 300);
-    }
-    function stopSnow() {
-        clearInterval(snowInterval);
-        snowInterval = null;
-        document.querySelectorAll('.snowflake').forEach(el => el.remove());
+    function toggleCloset() {
+        const panel = document.getElementById('closetPanel');
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        } else {
+            panel.style.display = 'block';
+            renderShop();
+        }
     }
 
-    // --- GIFT LOGIC ---
-    let taps = 100;
-    const giftOpened = localStorage.getItem('xmasGiftOpened');
+    function renderShop() {
+        const grid = document.getElementById('shopGrid');
+        grid.innerHTML = "";
+        
+        ITEMS.forEach(item => {
+            const owned = inventory.includes(item.id);
+            const div = document.createElement('div');
+            div.className = `shop-item ${owned ? 'owned' : ''} ${currentHat === item.id ? 'selected' : ''}`;
+            div.onclick = () => handleItemClick(item);
+            
+            div.innerHTML = `
+                <div class="shop-icon">${item.icon}</div>
+                <div class="price-tag">${owned ? 'Owned' : item.price + ' 🪙'}</div>
+            `;
+            grid.appendChild(div);
+        });
+    }
 
-    if (giftOpened !== 'true') {
+    function handleItemClick(item) {
+        if (inventory.includes(item.id)) {
+            // Equip
+            currentHat = item.id;
+            localStorage.setItem('currentHat', currentHat);
+            renderMascot();
+            renderShop(); // Refresh UI to show selected border
+        } else {
+            // Buy
+            if (scales >= item.price) {
+                if(confirm(`Buy ${item.name} for ${item.price} Scales?`)) {
+                    scales -= item.price;
+                    inventory.push(item.id);
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    currentHat = item.id;
+                    localStorage.setItem('currentHat', currentHat);
+                    updateWallet();
+                    renderMascot();
+                    renderShop();
+                }
+            } else {
+                alert("Not enough Scales! Go feed the snake.");
+            }
+        }
+    }
+
+    function renderMascot() {
+        const hatObj = ITEMS.find(i => i.id === currentHat);
+        // If it's a "face" emoji (cowboy, cool, party), we REPLACE the snake face
+        // If it's a "hat" emoji (tophat, crown, bow), we try to layer it? 
+        // Actually, simple is better: Just replace the "Hat Icon" span next to the snake.
+        // Wait, the user wants DRESS UP.
+        // Let's make it: Snake Emoji + Hat Emoji next to it.
+        
+        if (currentHat === 'none') {
+            document.getElementById('mascotIcon').innerText = "🐍";
+            document.getElementById('hatIcon').innerText = "";
+        } else {
+            // Some emojis work better as replacements, some as addons
+            if (['cowboy','cool','party'].includes(currentHat)) {
+                 // For faces, we might just put the face NEXT to the snake?
+                 // Or we keep the snake and put the hat next to it.
+                 document.getElementById('mascotIcon').innerText = "🐍";
+                 document.getElementById('hatIcon').innerText = hatObj.icon;
+            } else {
+                document.getElementById('mascotIcon').innerText = "🐍";
+                document.getElementById('hatIcon').innerText = hatObj.icon;
+            }
+        }
+    }
+
+    // --- BIRTHDAY LOGIC ---
+    function checkBirthday() {
+        const today = new Date();
+        const month = today.getMonth(); // 0 = Jan
+        const day = today.getDate();
+        
+        // Jan 26th or 27th
+        if (month === 0 && (day === 26 || day === 27)) {
+            // Check if already opened THIS YEAR
+            const yearKey = `bday_${today.getFullYear()}`;
+            if (!localStorage.getItem(yearKey)) {
+                triggerBirthdayMode();
+            }
+        }
+    }
+
+    // Call this manually in console to test: triggerBirthdayMode()
+    function triggerBirthdayMode() {
         document.getElementById('giftOverlay').style.display = 'flex';
-        // Snow during gift opening regardless of theme
-        startSnow();
+        // Add Party Hat to inventory automatically
+        if(!inventory.includes('party')) {
+            inventory.push('party');
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+        }
     }
 
-    function tapGift() {
+    // DEBUG: Uncomment below to test birthday mode TODAY
+    // triggerBirthdayMode(); 
+
+    // --- BIRTHDAY MINIGAME ---
+    let taps = 15;
+    function tapBrick() {
         taps--;
         document.getElementById('tapCount').innerText = taps;
-        const box = document.querySelector('.gift-box');
-        box.style.transform = `scale(1.1) rotate(${Math.random()*20 - 10}deg)`;
-        setTimeout(() => box.style.transform = 'scale(1) rotate(0deg)', 100);
+        
+        const b = document.createElement('div');
+        b.className = 'lego-brick';
+        b.style.backgroundColor = ['red','blue','green','yellow'][Math.floor(Math.random()*4)];
+        b.style.bottom = (Math.random() * 100) + 'px';
+        b.style.left = (Math.random() * 150) + 'px';
+        document.getElementById('buildArea').appendChild(b);
 
         if (taps <= 0) {
             document.getElementById('wrapperBox').style.display = 'none';
             document.getElementById('giftCard').style.display = 'block';
             
-            // UNLOCK REWARD
-            localStorage.setItem('xmasGiftOpened', 'true');
-            localStorage.setItem('winterUnlocked', 'true');
-            addWinterSwatch();
-            
-            confettiExplosion();
+            // Mark as opened for this year
+            const yearKey = `bday_${new Date().getFullYear()}`;
+            localStorage.setItem(yearKey, 'true');
         }
     }
-
     function closeGift() {
         document.getElementById('giftOverlay').style.display = 'none';
-        // Switch to winter theme immediately upon close
-        enableWinter();
+        enableBlock(); // Turn on Lego theme
     }
 
-    function resetGift() {
-        localStorage.removeItem('xmasGiftOpened');
-        location.reload();
-    }
-
-    function confettiExplosion() {
-        for(let i=0; i<50; i++) {
-            const conf = document.createElement('div');
-            conf.style.position = 'fixed';
-            conf.style.left = '50%'; conf.style.top = '50%';
-            conf.style.width = '10px'; conf.style.height = '10px';
-            conf.style.backgroundColor = ['#badc58', '#ff7675', '#74b9ff'][Math.floor(Math.random()*3)];
-            conf.style.zIndex = 300;
-            document.body.appendChild(conf);
-            const destX = (Math.random() - 0.5) * window.innerWidth;
-            const destY = (Math.random() - 0.5) * window.innerHeight;
-            conf.animate([
-                { transform: 'translate(0,0)' },
-                { transform: `translate(${destX}px, ${destY}px) rotate(720deg)`, opacity: 0 }
-            ], { duration: 1000, fill: 'forwards' });
+    // --- TRACKER LOGIC ---
+    function confirmFeed() { 
+        if(confirm("Confirm feeding?")) {
+            feedSnake();
         }
     }
-
-    // --- RPG & APP UTILS ---
-    const MOVES = {
-        1: [{name:"Boop", dmg:4, type:"atk"}, {name:"Hiss", dmg:0, type:"debuff", msg:"Enemy slowed!"}, {name:"Panic", dmg:0, type:"heal", val:10, msg:"Healed!"}, {name:"Nip", dmg:6, type:"atk"}],
-        2: [{name:"Strike", dmg:12, type:"atk"}, {name:"Coil", dmg:0, type:"heal", val:20, msg:"Healed!"}, {name:"Tail Whip", dmg:18, type:"atk", acc:0.8}, {name:"Venom", dmg:5, type:"dot", msg:"Poisoned!"}],
-        3: [{name:"Chomp", dmg:25, type:"atk"}, {name:"Constrict", dmg:10, type:"stun", msg:"Stunned!"}, {name:"Devour", dmg:20, type:"lifesteal", msg:"Drained!"}, {name:"Judgement", dmg:99, type:"ult", acc:0.5}]
-    };
-
-    function startRPG() {
-        document.getElementById('mainCard').style.display = 'none';
-        document.getElementById('mapScreen').style.display = 'flex';
-        updateMapUI();
-    }
-    function exitRPG() {
-        document.getElementById('mapScreen').style.display = 'none';
-        document.getElementById('mainCard').style.display = 'block';
-        localStorage.setItem('rpgSave', JSON.stringify(player));
-    }
-    function updateMapUI() {
-        document.getElementById('mapPlayerName').innerText = ["Shoelace", "Danger Noodle", "Nope Rope"][player.stage - 1];
-        document.getElementById('mapPlayerLvl').innerText = player.lvl;
-        const pPct = (player.hp/player.maxHp)*100;
-        document.getElementById('mapPlayerHp').style.width = pPct+"%";
-        const bossBtn = document.getElementById('bossLocBtn');
-        if(player.lvl >= 5) { bossBtn.style.opacity=1; bossBtn.style.pointerEvents='auto'; }
-    }
-    function travelTo(loc) {
-        let chance = 0.5; let danger = 1;
-        if(loc === 'livingroom') { 
-            player.hp = Math.min(player.maxHp, player.hp + Math.floor(player.maxHp*0.3));
-            document.getElementById('mapLog').innerText = "Warmed up by the fire. HP Restored.";
-            updateMapUI(); localStorage.setItem('rpgSave', JSON.stringify(player)); return;
-        }
-        else if (loc === 'hallway') { danger = 99; chance = 1.0; } 
-        else if (loc === 'garage') { danger = 3; chance = 0.7; }
+    function feedSnake() {
+        localStorage.setItem('lastFed', new Date().toISOString());
+        localStorage.setItem('interval', document.getElementById('interval').value);
         
-        if(Math.random() < chance) { setTimeout(() => generateEnemy(danger), 400); }
-        else { document.getElementById('mapLog').innerText = "Safe... for now."; }
-    }
-    function generateEnemy(danger) {
-        document.getElementById('mapScreen').style.display = 'none';
-        document.getElementById('battleScreen').style.display = 'flex';
+        // Reward
+        scales += 50;
+        updateWallet();
+        alert("Yum! +50 Scales 🪙");
         
-        if(danger === 99) {
-            enemy = { name: "THE GRINCH", icon: "🧟", hp: 200, maxHp: 200, atk: 25 };
-        } else {
-            const list = [
-                {n:"Gingerbread Man", i:"🍪", hp:20, atk:4},
-                {n:"Evil Elf", i:"🧝", hp:35, atk:6},
-                {n:"Killer Reindeer", i:"🦌", hp:50, atk:10},
-                {n:"Angry Snowman", i:"☃️", hp:80, atk:14}
-            ];
-            const base = list[Math.min(list.length-1, Math.floor(Math.random() * (player.lvl/2 + 1)))];
-            enemy = { ...base, maxHp: base.hp+(player.lvl*5), hp: base.hp+(player.lvl*5), atk: base.atk+player.lvl };
-        }
-        
-        document.getElementById('enemyName').innerText = enemy.name;
-        document.getElementById('enemyLvl').innerText = player.lvl;
-        document.getElementById('enemySprite').innerText = enemy.icon;
-        document.getElementById('playerSprite').innerText = "🐍🎅";
-        document.getElementById('battleLog').innerText = `A wild ${enemy.name} appeared!`;
-        
-        const grid = document.getElementById('moveGrid'); grid.innerHTML = "";
-        MOVES[player.stage].forEach(m => {
-            const btn = document.createElement('button'); btn.className='move-btn'; btn.innerText=m.name;
-            btn.onclick = () => executeMove(m); grid.appendChild(btn);
-        });
-        const run = document.createElement('button'); run.className='move-btn run-btn'; run.innerText="RUN";
-        run.onclick = returnToMap; grid.appendChild(run);
-        
-        document.getElementById('moveGrid').style.display = 'grid';
-        document.getElementById('continueBtn').style.display = 'none';
-        renderUI();
+        updateDisplay();
     }
-    function executeMove(m) {
-        let dmg = 0; let msg = "";
-        if(m.type==='atk') { dmg=m.dmg+player.lvl; enemy.hp-=dmg; msg=`Hit for ${dmg}!`; }
-        else if(m.type==='heal') { player.hp+=m.val; msg="Healed!"; }
-        setTimeout(() => {
-            if(enemy.hp <= 0) { victory(); }
-            else { 
-                player.hp -= enemy.atk; 
-                document.getElementById('battleLog').innerText = `Enemy hit for ${enemy.atk}!`;
-                renderUI();
-                if(player.hp <= 0) {
-                    player.hp = player.maxHp; player.xp = 0;
-                    alert("You fainted! XP Lost."); returnToMap();
-                }
-            }
-        }, 800);
-        document.getElementById('battleLog').innerText = msg; renderUI();
-    }
-    function victory() {
-        player.xp += 20;
-        if(player.xp >= player.nextLvl) { player.lvl++; player.xp=0; player.nextLvl*=1.5; player.maxHp+=10; player.hp=player.maxHp; alert("Level Up!"); checkEvolution(); }
-        document.getElementById('battleLog').innerText = "Victory!";
-        document.getElementById('moveGrid').style.display='none';
-        document.getElementById('continueBtn').style.display='block';
-        localStorage.setItem('rpgSave', JSON.stringify(player));
-    }
-    function checkEvolution() {
-        if(player.lvl >= 5 && player.stage < 2) { player.stage=2; alert("Evolved to Danger Noodle!"); }
-        if(player.lvl >= 10 && player.stage < 3) { player.stage=3; alert("Evolved to Nope Rope!"); }
-    }
-    function renderUI() {
-        document.getElementById('enemyHp').style.width = Math.max(0, (enemy.hp/enemy.maxHp)*100) + "%";
-        document.getElementById('playerHp').style.width = Math.max(0, (player.hp/player.maxHp)*100) + "%";
-        document.getElementById('playerLvl').innerText = player.lvl;
-    }
-    function returnToMap() {
-        document.getElementById('battleScreen').style.display = 'none';
-        document.getElementById('mapScreen').style.display = 'flex';
-        updateMapUI();
-    }
-    function toggleSettings() {
-        const p = document.getElementById('settingsPanel'); p.style.display = p.style.display==='block'?'none':'block';
-    }
-    function saveSettings() { localStorage.setItem('interval', document.getElementById('interval').value); updateDisplay(); }
-    function confirmFeed() { if(confirm("Confirm?")) feedSnake(); }
-    function feedSnake() { localStorage.setItem('lastFed', new Date().toISOString()); updateDisplay(); }
     function updateDisplay() {
-        const last = localStorage.getItem('lastFed'); const int = parseInt(document.getElementById('interval').value)||21;
+        const last = localStorage.getItem('lastFed');
+        const int = parseInt(document.getElementById('interval').value)||21;
         if(!last) return;
-        const next = new Date(new Date(last)); next.setDate(next.getDate()+int);
+        
+        const next = new Date(new Date(last));
+        next.setDate(next.getDate()+int);
         const diff = Math.ceil((next - new Date())/(1000*60*60*24));
+        
         document.getElementById('lastFedText').innerText = "Last: "+new Date(last).toLocaleDateString();
-        document.getElementById('statusDisplay').innerText = diff <= 0 ? "FEED NOW!" : `Next: ${diff} days`;
+        const stat = document.getElementById('statusDisplay');
+        
+        if (diff <= 0) { 
+            stat.innerHTML = "🍽️ FEED NOW!"; 
+            stat.style.color = "var(--danger)"; 
+        } else { 
+            stat.innerHTML = `Next feed in <b>${diff} days</b>`; 
+            stat.style.color = "var(--accent)"; // Note: accent might be red in block theme, green in default
+        }
     }
-    function addToCalendar() { alert("Calendar updated (Simulated)"); }
+
+    // --- THEMES ---
+    function setTheme(color, save=true) {
+        document.body.className = ''; // reset
+        document.documentElement.style.setProperty('--bg', color);
+        document.documentElement.style.setProperty('--card', '#1e1e1e');
+        document.documentElement.style.setProperty('--text', '#e0e0e0');
+        if(save) localStorage.setItem('themeColor', color);
+    }
+    function enableBlock(save=true) {
+        document.body.className = 'block-theme';
+        if(save) localStorage.setItem('themeColor', 'block');
+    }
+
+    function toggleSettings() {
+        const p = document.getElementById('settingsPanel');
+        p.style.display = p.style.display==='block'?'none':'block';
+    }
+    function saveSettings() { 
+        localStorage.setItem('interval', document.getElementById('interval').value); 
+        updateDisplay(); 
+    }
+    function addToCalendar() { alert("Calendar logic active."); }
 </script>
 </body>
 </html>
